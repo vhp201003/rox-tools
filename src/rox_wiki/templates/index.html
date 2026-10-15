@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROX WIKI — Command Cockpit</title>
+  <link rel="stylesheet" href="/ui/wiki.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <span class="logo">ROX WIKI</span>
+      <span class="tag-version">COMMAND COCKPIT</span>
+      <span class="breadcrumb" id="breadcrumb">DATABASE / MONSTERS</span>
+    </div>
+    <div class="top-bar-right">
+      <div class="view-switcher" id="view-switcher">
+        <button type="button" class="view-btn active" data-view="ledger" id="btn-view-ledger">LEDGER</button>
+        <button type="button" class="view-btn" data-view="compendium" id="btn-view-compendium">COMPENDIUM</button>
+      </div>
+      <span class="shortcut-hint">KEY [/] SEARCH</span>
+      <button class="btn-text" id="btn-theme" type="button">THEME: DARK</button>
+    </div>
+  </header>
+
+  <nav class="nav-tabs" id="nav-tabs">
+    <button class="tab-btn active" data-tab="monster" type="button">MONSTERS & FIELD</button>
+    <button class="tab-btn" data-tab="mvp" type="button">MVP / MINI BOSSES</button>
+    <button class="tab-btn" data-tab="simulator" type="button">DPS SIMULATOR STUDIO</button>
+  </nav>
+
+  <section class="filter-bar">
+    <!-- Row 1: Search & Core Parameters -->
+    <div class="filter-controls-row">
+      <div class="filter-group search-group">
+        <input type="text" id="search-input" class="filter-input" placeholder="Search monster, boss, or ID... (Press / to focus)" autocomplete="off">
+        <button type="button" id="btn-clear-search" class="btn-clear" style="display: none;">CLEAR</button>
+      </div>
+
+      <div class="filter-group" id="monster-filters">
+        <input type="number" id="filter-min-level" class="filter-input-num" placeholder="MIN LV" min="1" max="200">
+        <input type="number" id="filter-max-level" class="filter-input-num" placeholder="MAX LV" min="1" max="200">
+        <select id="sort-select" class="filter-select">
+          <option value="level_asc">SORT: LEVEL ASC</option>
+          <option value="level_desc">SORT: LEVEL DESC</option>
+          <option value="hp_desc">SORT: HP DESC</option>
+          <option value="name_asc">SORT: NAME</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <select id="group-select" class="filter-select">
+          <option value="none">GROUP: NONE</option>
+          <option value="race">GROUP: BY RACE</option>
+          <option value="element">GROUP: BY ELEMENT</option>
+        </select>
+        <button class="btn-text" id="btn-reset" type="button">RESET FILTERS</button>
+      </div>
+
+      <div class="total-count">
+        MATCHES: <span id="total-count" class="mono font-bold">0</span> ENTITIES
+      </div>
+    </div>
+
+    <!-- Row 2: Omni-Presets Bar (Smart Intent Filters) -->
+    <div class="presets-row">
+      <span class="preset-label">SMART PRESETS:</span>
+      <div class="preset-chips" id="preset-chips">
+        <button type="button" class="preset-chip" data-preset="exp-sweetspot">BEST EXP (LV 60-75)</button>
+        <button type="button" class="preset-chip" data-preset="low-def">LOW DEF (&lt; 30%)</button>
+        <button type="button" class="preset-chip" data-preset="high-mdef">HIGH M.DEF (&gt; 50%)</button>
+        <button type="button" class="preset-chip" data-preset="night-mvp">NIGHT WEATHER MVP</button>
+        <button type="button" class="preset-chip" data-preset="weak-fire">WEAK TO FIRE</button>
+        <button type="button" class="preset-chip" data-preset="weak-water">WEAK TO WATER</button>
+      </div>
+    </div>
+
+    <!-- Row 3: Faceted Chips Bar -->
+    <div class="pill-bar-container">
+      <div class="pill-row" id="race-pill-row">
+        <span class="pill-label">RACE:</span>
+        <button type="button" class="pill-btn active" data-race="">ALL</button>
+        <button type="button" class="pill-btn race-border-brute" data-race="Brute">BRUTE</button>
+        <button type="button" class="pill-btn race-border-undead" data-race="Undead">UNDEAD</button>
+        <button type="button" class="pill-btn race-border-demon" data-race="Demon">DEMON</button>
+        <button type="button" class="pill-btn race-border-plant" data-race="Plant">PLANT</button>
+        <button type="button" class="pill-btn race-border-insect" data-race="Insect">INSECT</button>
+        <button type="button" class="pill-btn race-border-fish" data-race="Fish">FISH</button>
+        <button type="button" class="pill-btn race-border-formless" data-race="Formless">FORMLESS</button>
+        <button type="button" class="pill-btn race-border-angel" data-race="Angel">ANGEL</button>
+        <button type="button" class="pill-btn race-border-demi-human" data-race="Demi-Human">DEMI-HUMAN</button>
+        <button type="button" class="pill-btn race-border-dragon" data-race="Dragon">DRAGON</button>
+      </div>
+      <div class="pill-row" id="element-pill-row">
+        <span class="pill-label">ELEMENT:</span>
+        <button type="button" class="pill-btn active" data-element="">ALL</button>
+        <button type="button" class="pill-btn pill-elem-neutral" data-element="Neutral"><img class="filter-elem-icon" src="/static/elements/neutral.png" alt=""> NEUTRAL</button>
+        <button type="button" class="pill-btn pill-elem-water" data-element="Water"><img class="filter-elem-icon" src="/static/elements/water.png" alt=""> WATER</button>
+        <button type="button" class="pill-btn pill-elem-earth" data-element="Earth"><img class="filter-elem-icon" src="/static/elements/earth.png" alt=""> EARTH</button>
+        <button type="button" class="pill-btn pill-elem-fire" data-element="Fire"><img class="filter-elem-icon" src="/static/elements/fire.png" alt=""> FIRE</button>
+        <button type="button" class="pill-btn pill-elem-wind" data-element="Wind"><img class="filter-elem-icon" src="/static/elements/wind.png" alt=""> WIND</button>
+        <button type="button" class="pill-btn pill-elem-poison" data-element="Poison"><img class="filter-elem-icon" src="/static/elements/poison.png" alt=""> POISON</button>
+        <button type="button" class="pill-btn pill-elem-holy" data-element="Holy"><img class="filter-elem-icon" src="/static/elements/holy.png" alt=""> HOLY</button>
+        <button type="button" class="pill-btn pill-elem-shadow" data-element="Shadow"><img class="filter-elem-icon" src="/static/elements/shadow.png" alt=""> SHADOW</button>
+        <button type="button" class="pill-btn pill-elem-ghost" data-element="Ghost"><img class="filter-elem-icon" src="/static/elements/ghost.png" alt=""> GHOST</button>
+        <button type="button" class="pill-btn pill-elem-undead" data-element="Undead"><img class="filter-elem-icon" src="/static/elements/undead.png" alt=""> UNDEAD</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <!-- View 1: Ledger Table View -->
+    <div class="table-container" id="ledger-view">
+      <table class="wiki-table" id="data-table">
+        <thead id="table-head">
+          <tr>
+            <th style="width: 290px;">ENTITY</th>
+            <th style="width: 60px;">LV</th>
+            <th style="width: 70px;">SIZE</th>
+            <th style="width: 170px;">RACE / ELEMENT</th>
+            <th style="width: 130px;">HEALTH</th>
+            <th style="width: 140px;">DEFENSE %</th>
+            <th style="width: 140px;">M.DEFENSE %</th>
+            <th style="width: 100px;">CRIT RES</th>
+            <th style="width: 100px;">FLEE</th>
+            <th>CARDS / WEATHER DROPS</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- View 2: Compendium Card Grid View -->
+    <div class="compendium-container" id="compendium-view" style="display: none;">
+      <div class="compendium-grid" id="compendium-grid"></div>
+    </div>
+
+    <!-- View 3: DPS Simulator Studio View -->
+    <div class="simulator-studio-container" id="simulator-view" style="display: none;">
+      <!-- Column 1: Character Ingestion & Progression Pillars -->
+      <aside class="studio-col studio-col-left">
+        <div class="studio-panel-header">
+          <span class="panel-tag">[PILLAR 01]</span>
+          <span class="panel-title">CHARACTER & PILLARS</span>
+        </div>
+        <div class="studio-section">
+          <label class="studio-label">CLASS / ARCHETYPE</label>
+          <div class="studio-row">
+            <select id="sim-class-select" class="filter-select" style="flex: 1;">
+              <option value="dragon_knight">Dragon Knight [SSOT Golden Ref]</option>
+              <option value="ranger">Ranger [Agility / Bow]</option>
+            </select>
+            <button type="button" class="btn-text" id="sim-btn-seed-baseline">SEED SSOT</button>
+          </div>
+        </div>
+
+        <div class="studio-section">
+          <label class="studio-label">CORE STATS (BASE + JOB)</label>
+          <div class="stats-grid-6">
+            <div class="stat-input-group">
+              <span class="stat-lbl">STR</span>
+              <input type="number" id="sim-stat-str" class="filter-input-num" min="0" max="4000">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl">AGI</span>
+              <input type="number" id="sim-stat-agi" class="filter-input-num" min="0" max="4000">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl">VIT</span>
+              <input type="number" id="sim-stat-vit" class="filter-input-num" min="0" max="4000">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl">INT</span>
+              <input type="number" id="sim-stat-int" class="filter-input-num" min="0" max="4000">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl">DEX</span>
+              <input type="number" id="sim-stat-dex" class="filter-input-num" min="0" max="4000">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl">LUK</span>
+              <input type="number" id="sim-stat-luk" class="filter-input-num" min="0" max="4000">
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-section">
+          <label class="studio-label">BATTLE ACHIEVEMENTS (EDITABLE)</label>
+          <div class="ba-grid" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 55px;">STR/VIT</span>
+              <input type="number" id="sim-ba-str" class="filter-input-num" value="72">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 55px;">F.P.DMG</span>
+              <input type="number" id="sim-ba-fpdmg" class="filter-input-num" step="0.01" value="0.24">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 55px;">FIRE.ENH</span>
+              <input type="number" id="sim-ba-fire" class="filter-input-num" step="0.01" value="0.30">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 55px;">MAX.HP%</span>
+              <input type="number" id="sim-ba-hp" class="filter-input-num" step="0.01" value="0.24">
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-section">
+          <label class="studio-label">PROGRESSION PILLARS (INPUT 1)</label>
+          <div class="sim-accordion-item">
+            <div class="sim-accordion-header" data-target="acc-progression">
+              <span>[+] TITLE STATS & SHINE POINTS</span>
+              <span class="mono">▸</span>
+            </div>
+            <div class="sim-accordion-content" id="acc-progression">
+              <div class="studio-row" style="margin-bottom: 6px;">
+                <label class="field-lbl" style="width: 75px;">SHINE PTS:</label>
+                <select id="sim-shine-points" class="filter-select" style="flex: 1; font-size: 11px;">
+                  ${[0, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800].map(pt => `<option value="${pt}">Tier ${pt} pts</option>`).join('')}
+                </select>
+              </div>
+              <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
+                <div class="stat-input-group">
+                  <span class="stat-lbl" style="width: 55px;">TITLE P.ATK</span>
+                  <input type="number" id="sim-title-patk" class="filter-input-num" value="0">
+                </div>
+                <div class="stat-input-group">
+                  <span class="stat-lbl" style="width: 55px;">TITLE P.PEN</span>
+                  <input type="number" id="sim-title-ppen" class="filter-input-num" step="0.01" value="0">
+                </div>
+                <div class="stat-input-group">
+                  <span class="stat-lbl" style="width: 55px;">TITLE F.DMG</span>
+                  <input type="number" id="sim-title-fdmg" class="filter-input-num" step="0.01" value="0">
+                </div>
+                <div class="stat-input-group">
+                  <span class="stat-lbl" style="width: 55px;">TITLE CRIT</span>
+                  <input type="number" id="sim-title-crit" class="filter-input-num" value="0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="studio-section">
+          <label class="studio-label">COMBAT BUFFS & ACCORDION INGESTION</label>
+          <div class="sim-accordion-item">
+            <div class="sim-accordion-header" data-target="acc-buffs">
+              <span>[+] COMBAT BUFFS & CONVERTER</span>
+              <span class="mono">▾</span>
+            </div>
+            <div class="sim-accordion-content active" id="acc-buffs">
+              <div class="buffs-list">
+                <label class="checkbox-label"><input type="checkbox" id="sim-buff-converter" checked> Converter: Fire</label>
+                <label class="checkbox-label"><input type="checkbox" id="sim-buff-spear-flash" checked> Spear Flash (1.4x DMG)</label>
+                <label class="checkbox-label"><input type="checkbox" id="sim-buff-concentration" checked> Concentration (+15% P.ATK)</label>
+                <label class="checkbox-label"><input type="checkbox" id="sim-buff-spooky-lamp" checked> Spooky Lamp (+10% F.DMG)</label>
+                <label class="checkbox-label"><input type="checkbox" id="sim-buff-pet" checked> Active Pet Buff</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sim-accordion-item">
+            <div class="sim-accordion-header" data-target="acc-pet">
+              <span>[+] PET & COMPANION INGESTION</span>
+              <span class="mono">▸</span>
+            </div>
+            <div class="sim-accordion-content" id="acc-pet">
+              <div style="margin-bottom: 8px;">
+                <button type="button" class="btn-text font-bold" id="sim-btn-open-pet-modal" style="width: 100%; border: 1px solid var(--border-focus); color: var(--border-focus); padding: 6px; font-size: 11px;">[OPEN PET SANCTUARY STUDIO]</button>
+              </div>
+              <div id="sim-pet-active-summary" style="font-size: 10px; color: var(--text-muted); margin-bottom: 6px;">Pet: None (1-6 Stars, Grade S)</div>
+
+              <!-- Companion Tally Inputs (SSOT Input3) -->
+              <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border);">
+                <label class="studio-label" style="margin-bottom: 4px;">COMPANION TALLY (INPUT 3)</label>
+                <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">STR</span>
+                    <input type="number" id="sim-companion-str" class="filter-input-num" value="0">
+                  </div>
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">INT</span>
+                    <input type="number" id="sim-companion-int" class="filter-input-num" value="0">
+                  </div>
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">P.ATK%</span>
+                    <input type="number" id="sim-companion-patk-pct" class="filter-input-num" step="0.01" value="0">
+                  </div>
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">CRIT.DMG</span>
+                    <input type="number" id="sim-companion-crit-dmg" class="filter-input-num" step="0.01" value="0">
+                  </div>
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">F.P.DMG</span>
+                    <input type="number" id="sim-companion-fpdmg" class="filter-input-num" step="0.01" value="0">
+                  </div>
+                  <div class="stat-input-group">
+                    <span class="stat-lbl" style="width: 50px;">FIRE.ENH</span>
+                    <input type="number" id="sim-companion-fire" class="filter-input-num" step="0.01" value="0">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sim-accordion-item">
+            <div class="sim-accordion-header" data-target="acc-divinity">
+              <span>[+] DIVINITY I-VIII SYSTEM</span>
+              <span class="mono">▸</span>
+            </div>
+            <div class="sim-accordion-content" id="acc-divinity">
+              <button type="button" class="btn-text font-bold" id="sim-btn-open-divinity-modal" style="width: 100%; border: 1px solid var(--border-focus); color: var(--border-focus); padding: 6px; font-size: 11px;">[OPEN DIVINITY INSCRIPTION STUDIO]</button>
+              <div id="sim-divinity-active-summary" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">8 Divinity Parts configured</div>
+            </div>
+          </div>
+
+          <div class="sim-accordion-item">
+            <div class="sim-accordion-header" data-target="acc-debuffs">
+              <span>[+] TARGET DEBUFF INFLICTION</span>
+              <span class="mono">▸</span>
+            </div>
+            <div class="sim-accordion-content" id="acc-debuffs">
+              <div class="studio-row" style="margin-bottom: 6px;">
+                <label class="field-lbl">MVP/MINI:</label>
+                <select id="sim-debuff-select" class="filter-select" style="flex: 1; font-size: 11px;">
+                  <option value="">None</option>
+                </select>
+              </div>
+              <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
+                <div class="stat-input-group">
+                  <span class="stat-lbl">F.P.DEF -%</span>
+                  <input type="number" id="sim-debuff-fdef" class="filter-input-num" step="0.05" min="0" max="1" value="0">
+                </div>
+                <div class="stat-input-group">
+                  <span class="stat-lbl">F.P.DMG -%</span>
+                  <input type="number" id="sim-debuff-fpdmg" class="filter-input-num" step="0.05" min="0" max="1" value="0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-section tally-summary-section">
+          <label class="studio-label">TALLY COMBAT STATS</label>
+          <div class="tally-box" id="sim-tally-summary"></div>
+        </div>
+      </aside>
+
+      <!-- Column 2: 11-Slot Equipment Workbench (2 Pages: Combat vs Costumes) -->
+      <section class="studio-col studio-col-center">
+        <div class="studio-panel-header">
+          <div class="header-left">
+            <span class="panel-tag">[PILLAR 02]</span>
+            <span class="panel-title">EQUIPMENT WORKBENCH</span>
+          </div>
+          <div class="awakening-badges" id="sim-awakening-badges"></div>
+        </div>
+        <!-- 2-Page Tabs (Screenshot 073107 vs Screenshot 073112) -->
+        <div class="gear-tabs-header" style="display: flex; background: var(--bg-canvas); border-bottom: 1px solid var(--border);">
+          <button type="button" class="tab-btn active" id="tab-gear-combat" style="flex: 1; padding: 6px; font-size: 10px; font-family: var(--font-mono); font-weight: 700; border: none; border-bottom: 2px solid var(--border-focus); background: transparent; color: var(--text-primary); cursor: pointer;">[PAGE 1: COMBAT GEARS]</button>
+          <button type="button" class="tab-btn" id="tab-gear-costumes" style="flex: 1; padding: 6px; font-size: 10px; font-family: var(--font-mono); font-weight: 700; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer;">[PAGE 2: COSTUMES & ORNAMENTS]</button>
+        </div>
+        <div class="gear-inventory-grid" id="sim-gear-grid"></div>
+      </section>
+
+      <!-- Column 3: Target Context, Metrics & A/B Sandbox -->
+      <aside class="studio-col studio-col-right">
+        <div class="studio-panel-header">
+          <span class="panel-tag">[COMBAT STUDIO]</span>
+          <span class="panel-title">METRICS & A/B SANDBOX</span>
+        </div>
+
+        <div class="target-card" id="sim-target-card">
+          <div class="target-header">
+            <span class="target-title">TARGET: <strong id="sim-target-name">Lord of the Dead Lv.150</strong></span>
+            <button type="button" class="btn-text" id="sim-btn-toggle-pvp">MODE: PVE</button>
+          </div>
+        </div>
+
+        <!-- PVP Manual Defender Cockpit (SSOT Output Q17:R27) -->
+        <div class="studio-section" id="sim-pvp-cockpit" style="display: none; background: rgba(239, 68, 68, 0.05); border-left: 2px solid #ef4444;">
+          <label class="studio-label" style="color: #ef4444;">TARGET PLAYER STATS (PVP DEFENDER)</label>
+          <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">P.DEF</span>
+              <input type="number" id="sim-pvp-pdef" class="filter-input-num" value="0.2">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">F.P.DEF</span>
+              <input type="number" id="sim-pvp-fpdef" class="filter-input-num" value="0.1">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">F.P.RED</span>
+              <input type="number" id="sim-pvp-fpred" class="filter-input-num" value="0.1">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">F.RED</span>
+              <input type="number" id="sim-pvp-fred" class="filter-input-num" value="0.05">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">P.RED</span>
+              <input type="number" id="sim-pvp-pred" class="filter-input-num" value="0.1">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">PVP.F.RED</span>
+              <input type="number" id="sim-pvp-pvpfpred" class="filter-input-num" value="0.1">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">PVP.P.RED</span>
+              <input type="number" id="sim-pvp-pvppred" class="filter-input-num" value="0.1">
+            </div>
+            <div class="stat-input-group">
+              <span class="stat-lbl" style="width: 60px;">ATTR.RES</span>
+              <input type="number" id="sim-pvp-attrres" class="filter-input-num" value="0.0">
+            </div>
+          </div>
+        </div>
+
+        <div class="headline-metrics">
+          <div class="metric-block primary">
+            <span class="metric-label">60s REALTIME DPS</span>
+            <span class="metric-value mono" id="sim-metric-dps">0</span>
+            <span class="metric-sub" id="sim-metric-dpm">DPM: 0 / 3 MINS</span>
+          </div>
+          <div class="metric-block">
+            <span class="metric-label">1-HIT CRIT DAMAGE</span>
+            <span class="metric-value mono" id="sim-metric-crit-hit">0</span>
+            <span class="metric-sub" id="sim-metric-noncrit-hit">Normal Attack: 0</span>
+          </div>
+        </div>
+
+        <!-- Sandbox Controls (Temporarily Hidden per gameplay design) -->
+        <div class="sandbox-controls" style="display: none;">
+          <div class="sandbox-buttons">
+            <button type="button" class="btn-text active" id="sim-btn-mode-a">BUILD A</button>
+            <button type="button" class="btn-text" id="sim-btn-clone-b">CLONE TO B</button>
+            <button type="button" class="btn-text" id="sim-btn-mode-b" style="display: none;">BUILD B</button>
+            <button type="button" class="btn-text" id="sim-btn-diff" style="display: none;">A/B DIFF</button>
+          </div>
+          <div class="sandbox-diff-panel" id="sim-diff-panel" style="display: none;"></div>
+        </div>
+
+        <div class="studio-section">
+          <label class="studio-label">9-SKILL ROTATION DAMAGE PARITY MATRIX</label>
+          <div class="skill-table-container">
+            <table class="sim-skill-table">
+              <thead>
+                <tr>
+                  <th>SKILL</th>
+                  <th>CRIT 1-HIT</th>
+                  <th>NON-CRIT</th>
+                  <th>60s HITS</th>
+                  <th>60s TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="sim-skill-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="studio-section">
+          <label class="studio-label">WATERFALL DAMAGE BREAKDOWN TRACE</label>
+          <pre class="trace-terminal mono" id="sim-trace-terminal"></pre>
+        </div>
+
+        <div class="studio-actions">
+          <button type="button" class="btn-action" id="sim-btn-copy-url">SHARE VIA URL HASH</button>
+          <button type="button" class="btn-action" id="sim-btn-reset-defaults">RESET TO SSOT</button>
+        </div>
+      </aside>
+    </div>
+
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <div class="empty-title">NO ENTITIES MATCHING FILTERS</div>
+      <div class="empty-desc">Try resetting your active level, element, or smart presets to broaden results.</div>
+    </div>
+  </main>
+
+  <footer class="pagination-bar">
+    <div class="page-status">
+      PAGE <span id="page-num" class="mono font-bold">1</span> OF <span id="page-total" class="mono font-bold">1</span>
+    </div>
+    <div class="pagination-actions">
+      <select id="limit-select" class="filter-select">
+        <option value="20" selected>LIMIT: 20</option>
+        <option value="50">LIMIT: 50</option>
+        <option value="100">LIMIT: 100</option>
+      </select>
+      <button class="btn-text" id="btn-prev" type="button">PREV</button>
+      <button class="btn-text" id="btn-next" type="button">NEXT</button>
+    </div>
+  </footer>
+
+  <div class="backdrop" id="backdrop"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-header">
+      <span class="drawer-title" id="drawer-title">MONSTER DOSSIER</span>
+      <button class="btn-text" id="btn-close-drawer" type="button">ESC / CLOSE</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+  <script src="/ui/js/simulator_engine.js"></script>
+  <script src="/ui/js/class_adapter.js"></script>
+  <script src="/ui/js/simulator_ui.js"></script>
+  <script src="/ui/wiki.js"></script>
+</body>
+</html>

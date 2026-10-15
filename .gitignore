@@ -1,0 +1,38 @@
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Game Raw References & Extracted Bundles (10GB+ Raw Unity Assets)
+references/
+*.apk
+*.exe
+*.dll
+
+# Database & Generated Data files
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/*.json
+data/static/
+output/
+
+# Template raw spreadsheets
+assets/templates/*.xlsx
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
