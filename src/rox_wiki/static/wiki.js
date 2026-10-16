@@ -483,10 +483,10 @@
   async function openDrawer(monsterId) {
     DOM.drawer.classList.add("open");
     DOM.backdrop.classList.add("open");
-    DOM.drawerTitle.textContent = `DOSSIER · LOADING #${monsterId}...`;
+    DOM.drawerTitle.textContent = `LOADING #${monsterId}...`;
     DOM.drawerBody.innerHTML = `
       <div style="padding: 40px 10px; text-align: center; color: var(--text-muted); font-family: var(--font-mono);">
-        FETCHING DEEP ATTRIBUTES & CARDS...
+        LOADING STATS & CARDS...
       </div>
     `;
 
@@ -500,14 +500,14 @@
       console.error("Failed to fetch monster details:", err);
       DOM.drawerBody.innerHTML = `
         <div style="padding: 24px; color: #ef4444; font-family: var(--font-mono);">
-          FAILED TO LOAD DOSSIER FOR ID #${monsterId}.
+          FAILED TO LOAD MONSTER DETAILS FOR ID #${monsterId}.
         </div>
       `;
     }
   }
 
   function renderBentoDrawer(m) {
-    DOM.drawerTitle.textContent = `DOSSIER · ${m.name.toUpperCase()} (#${m.id})`;
+    DOM.drawerTitle.textContent = `MONSTER DETAILS · ${m.name.toUpperCase()} (#${m.id})`;
 
     const iconSrc = m.icon_url || `/static/monsters/${m.id}.png`;
     const resId = m.res_id || m.id;
@@ -515,7 +515,7 @@
     let tierBadge = "";
     if (m.is_mvp) tierBadge = `<span class="badge badge-mvp">MVP BOSS</span>`;
     else if (m.is_mini) tierBadge = `<span class="badge badge-mini">MINI BOSS</span>`;
-    else tierBadge = `<span class="badge badge-elem">FIELD ENTITY</span>`;
+    else tierBadge = `<span class="badge badge-elem">MONSTER</span>`;
 
     const defPct = Number(m.total_def) || 0;
     const mdefPct = Number(m.total_mdef) || 0;
@@ -574,7 +574,7 @@
         <div class="bento-cell">
           <div class="bento-title">CARD DROPS</div>
           <div style="color: var(--text-muted); font-size: 12px; font-family: var(--font-mono);">
-            NO CARD DROPS REGISTERED FOR THIS ENTITY.
+            NO CARD DROPS RECORDED.
           </div>
         </div>
       `;
@@ -620,7 +620,7 @@
 
     const weaknessModuleHtml = `
       <div class="bento-cell">
-        <div class="bento-title">ELEMENTAL WEAKNESS MATRIX (DEFENDING AS ${defendingElem.toUpperCase()})</div>
+        <div class="bento-title">ELEMENTAL COUNTERS (DEFENDING AS ${defendingElem.toUpperCase()})</div>
         <div class="weakness-grid">
           ${weaknessItemsHtml}
         </div>
@@ -643,7 +643,7 @@
               ${renderSplitBadge(m.race_name, m.element_name)}
               <span class="badge badge-size">${(m.size_name || "Medium").toUpperCase()} SIZE</span>
             </div>
-            <button type="button" class="btn-text btn-sim-target" id="btn-drawer-sim-target" style="margin-top: 8px; font-weight: 700; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); width: 100%; text-align: center;">[CALC DPS VS THIS MONSTER -></button>
+            <button type="button" class="btn-wiki-test-dps btn-sim-target" id="btn-wiki-test-dps">⚔ Test DPS on this Monster</button>
           </div>
         </div>
       </div>
@@ -759,7 +759,7 @@
     `;
 
     // Hook CALC DPS click
-    const simTargetBtn = DOM.drawerBody.querySelector("#btn-drawer-sim-target");
+    const simTargetBtn = DOM.drawerBody.querySelector("#btn-wiki-test-dps, #btn-drawer-sim-target");
     if (simTargetBtn) {
       simTargetBtn.addEventListener("click", () => {
         closeDrawer();

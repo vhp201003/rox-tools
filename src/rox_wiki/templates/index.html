@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROX WIKI — Command Cockpit</title>
+  <title>ROX WIKI</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/ui/wiki.css">
 </head>
 <body>
   <header class="top-bar">
     <div class="top-bar-left">
       <span class="logo">ROX WIKI</span>
-      <span class="tag-version">COMMAND COCKPIT</span>
+      <span class="tag-version">DATABASE</span>
       <span class="breadcrumb" id="breadcrumb">DATABASE / MONSTERS</span>
     </div>
     <div class="top-bar-right">
@@ -26,7 +28,7 @@
   <nav class="nav-tabs" id="nav-tabs">
     <button class="tab-btn active" data-tab="monster" type="button">MONSTERS & FIELD</button>
     <button class="tab-btn" data-tab="mvp" type="button">MVP / MINI BOSSES</button>
-    <button class="tab-btn" data-tab="simulator" type="button">DPS SIMULATOR STUDIO</button>
+    <button class="tab-btn" data-tab="simulator" type="button">DPS SIMULATOR</button>
   </nav>
 
   <section class="filter-bar">
@@ -135,253 +137,225 @@
       <div class="compendium-grid" id="compendium-grid"></div>
     </div>
 
-    <!-- View 3: DPS Simulator Studio View -->
-    <div class="simulator-studio-container" id="simulator-view" style="display: none;">
-      <!-- Column 1: Character Ingestion & Progression Pillars -->
-      <aside class="studio-col studio-col-left">
-        <div class="studio-panel-header">
-          <span class="panel-tag">[PILLAR 01]</span>
-          <span class="panel-title">CHARACTER & PILLARS</span>
-        </div>
-        <div class="studio-section">
-          <label class="studio-label">CLASS / ARCHETYPE</label>
-          <div class="studio-row">
-            <select id="sim-class-select" class="filter-select" style="flex: 1;">
-              <option value="dragon_knight">Dragon Knight [SSOT Golden Ref]</option>
-              <option value="ranger">Ranger [Agility / Bow]</option>
-            </select>
-            <button type="button" class="btn-text" id="sim-btn-seed-baseline">SEED SSOT</button>
-          </div>
-        </div>
-
-        <div class="studio-section">
-          <label class="studio-label">CORE STATS (BASE + JOB)</label>
-          <div class="stats-grid-6">
-            <div class="stat-input-group">
-              <span class="stat-lbl">STR</span>
-              <input type="number" id="sim-stat-str" class="filter-input-num" min="0" max="4000">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl">AGI</span>
-              <input type="number" id="sim-stat-agi" class="filter-input-num" min="0" max="4000">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl">VIT</span>
-              <input type="number" id="sim-stat-vit" class="filter-input-num" min="0" max="4000">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl">INT</span>
-              <input type="number" id="sim-stat-int" class="filter-input-num" min="0" max="4000">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl">DEX</span>
-              <input type="number" id="sim-stat-dex" class="filter-input-num" min="0" max="4000">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl">LUK</span>
-              <input type="number" id="sim-stat-luk" class="filter-input-num" min="0" max="4000">
-            </div>
-          </div>
-        </div>
-
-        <div class="studio-section">
-          <label class="studio-label">BATTLE ACHIEVEMENTS (EDITABLE)</label>
-          <div class="ba-grid" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
-            <div class="stat-input-group">
-              <span class="stat-lbl" style="width: 55px;">STR/VIT</span>
-              <input type="number" id="sim-ba-str" class="filter-input-num" value="72">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl" style="width: 55px;">F.P.DMG</span>
-              <input type="number" id="sim-ba-fpdmg" class="filter-input-num" step="0.01" value="0.24">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl" style="width: 55px;">FIRE.ENH</span>
-              <input type="number" id="sim-ba-fire" class="filter-input-num" step="0.01" value="0.30">
-            </div>
-            <div class="stat-input-group">
-              <span class="stat-lbl" style="width: 55px;">MAX.HP%</span>
-              <input type="number" id="sim-ba-hp" class="filter-input-num" step="0.01" value="0.24">
-            </div>
-          </div>
-        </div>
-
-        <div class="studio-section">
-          <label class="studio-label">PROGRESSION PILLARS (INPUT 1)</label>
-          <div class="sim-accordion-item">
-            <div class="sim-accordion-header" data-target="acc-progression">
-              <span>[+] TITLE STATS & SHINE POINTS</span>
-              <span class="mono">▸</span>
-            </div>
-            <div class="sim-accordion-content" id="acc-progression">
-              <div class="studio-row" style="margin-bottom: 6px;">
-                <label class="field-lbl" style="width: 75px;">SHINE PTS:</label>
-                <select id="sim-shine-points" class="filter-select" style="flex: 1; font-size: 11px;">
-                  ${[0, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800].map(pt => `<option value="${pt}">Tier ${pt} pts</option>`).join('')}
+    <!-- View 3: DPS Simulator Bento Cockpit View (4-Bento Grid) -->
+    <div class="simulator-studio-container cockpit-layout bento-grid-container" id="simulator-view" style="display: none;">
+      <!-- Workspace Column (Bento 1 & Bento 2) -->
+      <main class="cockpit-workspace">
+        <!-- Bento 1: Equipment & Sockets (Paper Doll) -->
+        <section class="paper-doll-section bento-card" id="bento-equip">
+          <!-- Profile & Action Header Bar -->
+          <header class="cockpit-profile-bar" style="margin-bottom: 10px; border-radius: var(--radius-sm);">
+            <div class="profile-meta">
+              <div class="profile-job-picker" style="display: flex; align-items: center; gap: 6px;">
+                <label class="field-lbl">CLASS:</label>
+                <select id="sim-class-select" class="filter-select">
+                  <option value="dragon_knight">Dragon Knight</option>
+                  <option value="ranger">Ranger</option>
                 </select>
               </div>
-              <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
-                <div class="stat-input-group">
-                  <span class="stat-lbl" style="width: 55px;">TITLE P.ATK</span>
-                  <input type="number" id="sim-title-patk" class="filter-input-num" value="0">
+              <div class="profile-levels" style="display: flex; align-items: center; gap: 4px;">
+                <div class="stat-input-group" title="Base Level">
+                  <span class="stat-lbl" style="width: 45px;">BASE LV</span>
+                  <input type="number" id="sim-base-level" class="filter-input-num" min="1" max="150" value="87" style="width: 38px;">
                 </div>
-                <div class="stat-input-group">
-                  <span class="stat-lbl" style="width: 55px;">TITLE P.PEN</span>
-                  <input type="number" id="sim-title-ppen" class="filter-input-num" step="0.01" value="0">
-                </div>
-                <div class="stat-input-group">
-                  <span class="stat-lbl" style="width: 55px;">TITLE F.DMG</span>
-                  <input type="number" id="sim-title-fdmg" class="filter-input-num" step="0.01" value="0">
-                </div>
-                <div class="stat-input-group">
-                  <span class="stat-lbl" style="width: 55px;">TITLE CRIT</span>
-                  <input type="number" id="sim-title-crit" class="filter-input-num" value="0">
+                <div class="stat-input-group" title="Job Level">
+                  <span class="stat-lbl" style="width: 40px;">JOB LV</span>
+                  <input type="number" id="sim-job-level" class="filter-input-num" min="1" max="100" value="17" style="width: 38px;">
                 </div>
               </div>
             </div>
+            <div class="cockpit-actions">
+              <button type="button" class="btn-text" id="sim-btn-seed-baseline" title="Reset all inputs to default baseline">RESET</button>
+              <button type="button" class="btn-text" id="sim-btn-copy-url">SHARE</button>
+            </div>
+          </header>
+
+          <div class="bento-card-header" style="margin-bottom: 8px;">
+            <div class="bento-card-title">
+              <span>EQUIPMENT & SOCKETS</span>
+            </div>
+            <div class="awakening-badges" id="sim-awakening-badges-doll"></div>
           </div>
-        </div>
-
-
-        <div class="studio-section">
-          <label class="studio-label">COMBAT BUFFS & ACCORDION INGESTION</label>
-          <div class="sim-accordion-item">
-            <div class="sim-accordion-header" data-target="acc-buffs">
-              <span>[+] COMBAT BUFFS & CONVERTER</span>
-              <span class="mono">▾</span>
-            </div>
-            <div class="sim-accordion-content active" id="acc-buffs">
-              <div class="buffs-list">
-                <label class="checkbox-label"><input type="checkbox" id="sim-buff-converter" checked> Converter: Fire</label>
-                <label class="checkbox-label"><input type="checkbox" id="sim-buff-spear-flash" checked> Spear Flash (1.4x DMG)</label>
-                <label class="checkbox-label"><input type="checkbox" id="sim-buff-concentration" checked> Concentration (+15% P.ATK)</label>
-                <label class="checkbox-label"><input type="checkbox" id="sim-buff-spooky-lamp" checked> Spooky Lamp (+10% F.DMG)</label>
-                <label class="checkbox-label"><input type="checkbox" id="sim-buff-pet" checked> Active Pet Buff</label>
-              </div>
-            </div>
+          <div class="paper-doll-tabs" id="paper-doll-tab-switcher">
+            <button type="button" class="doll-tab-btn active" id="tab-gear-combat" data-tab="combat">Combat (8)</button>
+            <button type="button" class="doll-tab-btn" id="tab-gear-costumes" data-tab="costumes">Costume (6)</button>
           </div>
-
-          <div class="sim-accordion-item">
-            <div class="sim-accordion-header" data-target="acc-pet">
-              <span>[+] PET & COMPANION INGESTION</span>
-              <span class="mono">▸</span>
+          <div class="paper-doll-container" id="sim-paper-doll">
+            <div class="doll-column doll-col-left">
+              <div class="doll-slot" data-slot="clothes" id="slot-clothes"></div>
+              <div class="doll-slot" data-slot="cloak" id="slot-cloak"></div>
+              <div class="doll-slot" data-slot="shoes" id="slot-shoes"></div>
+              <div class="doll-slot" data-slot="accessory_1" id="slot-accessory_1"></div>
+              <div class="doll-slot" data-slot="costume_head" id="slot-costume_head" style="display: none;"></div>
+              <div class="doll-slot" data-slot="costume_eyes" id="slot-costume_eyes" style="display: none;"></div>
+              <div class="doll-slot" data-slot="costume_mouth" id="slot-costume_mouth" style="display: none;"></div>
             </div>
-            <div class="sim-accordion-content" id="acc-pet">
-              <div style="margin-bottom: 8px;">
-                <button type="button" class="btn-text font-bold" id="sim-btn-open-pet-modal" style="width: 100%; border: 1px solid var(--border-focus); color: var(--border-focus); padding: 6px; font-size: 11px;">[OPEN PET SANCTUARY STUDIO]</button>
-              </div>
-              <div id="sim-pet-active-summary" style="font-size: 10px; color: var(--text-muted); margin-bottom: 6px;">Pet: None (1-6 Stars, Grade S)</div>
-
-              <!-- Companion Tally Inputs (SSOT Input3) -->
-              <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border);">
-                <label class="studio-label" style="margin-bottom: 4px;">COMPANION TALLY (INPUT 3)</label>
-                <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">STR</span>
-                    <input type="number" id="sim-companion-str" class="filter-input-num" value="0">
-                  </div>
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">INT</span>
-                    <input type="number" id="sim-companion-int" class="filter-input-num" value="0">
-                  </div>
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">P.ATK%</span>
-                    <input type="number" id="sim-companion-patk-pct" class="filter-input-num" step="0.01" value="0">
-                  </div>
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">CRIT.DMG</span>
-                    <input type="number" id="sim-companion-crit-dmg" class="filter-input-num" step="0.01" value="0">
-                  </div>
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">F.P.DMG</span>
-                    <input type="number" id="sim-companion-fpdmg" class="filter-input-num" step="0.01" value="0">
-                  </div>
-                  <div class="stat-input-group">
-                    <span class="stat-lbl" style="width: 50px;">FIRE.ENH</span>
-                    <input type="number" id="sim-companion-fire" class="filter-input-num" step="0.01" value="0">
-                  </div>
+            <div class="doll-center-preview">
+              <div class="doll-center-pedestal">
+                <div class="doll-avatar-halo"></div>
+                <div class="doll-avatar-icon">
+                  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                    <path d="M12 6v6l4 2"/>
+                  </svg>
                 </div>
+                <div class="doll-center-class" id="doll-center-class">DRAGON KNIGHT</div>
+                <div class="doll-center-levels" id="doll-center-levels">Lv.87 / Job.17</div>
+                <div class="doll-center-mode-tag" id="doll-center-mode-tag">COMBAT GEAR</div>
               </div>
             </div>
-          </div>
-
-          <div class="sim-accordion-item">
-            <div class="sim-accordion-header" data-target="acc-divinity">
-              <span>[+] DIVINITY I-VIII SYSTEM</span>
-              <span class="mono">▸</span>
-            </div>
-            <div class="sim-accordion-content" id="acc-divinity">
-              <button type="button" class="btn-text font-bold" id="sim-btn-open-divinity-modal" style="width: 100%; border: 1px solid var(--border-focus); color: var(--border-focus); padding: 6px; font-size: 11px;">[OPEN DIVINITY INSCRIPTION STUDIO]</button>
-              <div id="sim-divinity-active-summary" style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">8 Divinity Parts configured</div>
+            <div class="doll-column doll-col-right">
+              <div class="doll-slot" data-slot="weapon" id="slot-weapon"></div>
+              <div class="doll-slot" data-slot="shield" id="slot-shield"></div>
+              <div class="doll-slot" data-slot="talisman" id="slot-talisman"></div>
+              <div class="doll-slot" data-slot="accessory_2" id="slot-accessory_2"></div>
+              <div class="doll-slot" data-slot="costume_back" id="slot-costume_back" style="display: none;"></div>
+              <div class="doll-slot" data-slot="costume_tail" id="slot-costume_tail" style="display: none;"></div>
+              <div class="doll-slot" data-slot="costume_mask" id="slot-costume_mask" style="display: none;"></div>
             </div>
           </div>
+        </section>
 
-          <div class="sim-accordion-item">
-            <div class="sim-accordion-header" data-target="acc-debuffs">
-              <span>[+] TARGET DEBUFF INFLICTION</span>
-              <span class="mono">▸</span>
-            </div>
-            <div class="sim-accordion-content" id="acc-debuffs">
-              <div class="studio-row" style="margin-bottom: 6px;">
-                <label class="field-lbl">MVP/MINI:</label>
-                <select id="sim-debuff-select" class="filter-select" style="flex: 1; font-size: 11px;">
-                  <option value="">None</option>
-                </select>
+        <!-- Bento 2: Secondary Systems Tiles -->
+        <section class="secondary-systems-container bento-card" id="bento-systems">
+          <div class="bento-card-header">
+            <span class="bento-card-title">SECONDARY SYSTEMS</span>
+            <span class="panel-tag">CLICK TILE TO CONFIGURE</span>
+          </div>
+          <div class="bento-systems-grid">
+            <!-- Tile 1: Base Stats -->
+            <div class="bento-system-tile" id="tile-base-stats">
+              <div class="system-tile-header">
+                <span class="system-tile-title">BASE STATS</span>
+                <span class="system-tile-badge">ALLOCATED</span>
               </div>
-              <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
-                <div class="stat-input-group">
-                  <span class="stat-lbl">F.P.DEF -%</span>
-                  <input type="number" id="sim-debuff-fdef" class="filter-input-num" step="0.05" min="0" max="1" value="0">
-                </div>
-                <div class="stat-input-group">
-                  <span class="stat-lbl">F.P.DMG -%</span>
-                  <input type="number" id="sim-debuff-fpdmg" class="filter-input-num" step="0.05" min="0" max="1" value="0">
-                </div>
+              <div class="system-tile-body" id="tile-base-stats-summary">
+                STR 100 · AGI 60 · VIT 100 · INT 30 · DEX 39 · LUK 50
               </div>
+              <div class="system-tile-action">CONFIGURE BASE STATS ▸</div>
+            </div>
+
+            <!-- Tile 2: Divinity Inscriptions -->
+            <div class="bento-system-tile" id="tile-divinity">
+              <div class="system-tile-header">
+                <span class="system-tile-title">DIVINITY</span>
+                <span class="system-tile-badge" id="tile-divinity-badge">8/8 GOLD</span>
+              </div>
+              <div class="system-tile-body" id="tile-divinity-summary">
+                8 Divinity Parts Configured · Flash Active
+              </div>
+              <div class="system-tile-action">CONFIGURE INSCRIPTIONS ▸</div>
+            </div>
+
+            <!-- Tile 3: Companions -->
+            <div class="bento-system-tile" id="tile-companions">
+              <div class="system-tile-header">
+                <span class="system-tile-title">COMPANIONS</span>
+                <span class="system-tile-badge">4 ACTIVE</span>
+              </div>
+              <div class="system-tile-body" id="tile-companions-summary">
+                Spark, Wraith, Cloudsong, Bubbles · 24 Stat Lines
+              </div>
+              <div class="system-tile-action">CONFIGURE COMPANIONS ▸</div>
+            </div>
+
+            <!-- Tile 4: Buffs & Titles -->
+            <div class="bento-system-tile" id="tile-buffs">
+              <div class="system-tile-header">
+                <span class="system-tile-title">BUFFS & TITLES</span>
+                <span class="system-tile-badge" id="tile-buffs-badge">5 BUFFS ACTIVE</span>
+              </div>
+              <div class="system-tile-body" id="tile-buffs-summary">
+                Fire Converter · Spear Flash · Concentration · Shine Pts: 0
+              </div>
+              <div class="system-tile-action">CONFIGURE BUFFS ▸</div>
             </div>
           </div>
-        </div>
 
-        <div class="studio-section tally-summary-section">
-          <label class="studio-label">TALLY COMBAT STATS</label>
-          <div class="tally-box" id="sim-tally-summary"></div>
-        </div>
-      </aside>
-
-      <!-- Column 2: 11-Slot Equipment Workbench (2 Pages: Combat vs Costumes) -->
-      <section class="studio-col studio-col-center">
-        <div class="studio-panel-header">
-          <div class="header-left">
-            <span class="panel-tag">[PILLAR 02]</span>
-            <span class="panel-title">EQUIPMENT WORKBENCH</span>
+          <!-- Legacy Accordions Hidden Container for 100% Contract Test & DOM Backwards Compatibility -->
+          <div id="legacy-accordions" style="display: none;">
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-base-stats"><span>Base Stats</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content active" id="acc-base-stats">
+                <input type="number" id="sim-stat-str">
+                <input type="number" id="sim-stat-agi">
+                <input type="number" id="sim-stat-vit">
+                <input type="number" id="sim-stat-int">
+                <input type="number" id="sim-stat-dex">
+                <input type="number" id="sim-stat-luk">
+              </div>
+            </div>
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-progression"><span>Progression</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content" id="acc-progression">
+                <input type="number" id="sim-ba-str" value="72">
+                <input type="number" id="sim-ba-fpdmg" value="0.24">
+                <input type="number" id="sim-ba-fire" value="0.30">
+                <input type="number" id="sim-ba-hp" value="0.24">
+                <select id="sim-shine-points"><option value="0">0</option></select>
+                <input type="number" id="sim-title-patk" value="0">
+                <input type="number" id="sim-title-ppen" value="0">
+                <input type="number" id="sim-title-fdmg" value="0">
+                <input type="number" id="sim-title-crit" value="0">
+              </div>
+            </div>
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-buffs"><span>Buffs</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content active" id="acc-buffs">
+                <input type="checkbox" id="sim-buff-converter" checked>
+                <input type="checkbox" id="sim-buff-spear-flash" checked>
+                <input type="checkbox" id="sim-buff-concentration" checked>
+                <input type="checkbox" id="sim-buff-spooky-lamp" checked>
+                <input type="checkbox" id="sim-buff-pet" checked>
+              </div>
+            </div>
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-pet"><span>Pet</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content" id="acc-pet">
+                <button type="button" id="sim-btn-open-pet-modal"></button>
+                <div id="sim-pet-active-summary"></div>
+                <button type="button" id="sim-btn-open-companion-modal"></button>
+                <div id="sim-companion-active-summary"></div>
+              </div>
+            </div>
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-divinity"><span>Divinity</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content" id="acc-divinity">
+                <button type="button" id="sim-btn-open-divinity-modal"></button>
+                <div id="sim-divinity-active-summary"></div>
+                <div id="sim-divinity-list"></div>
+              </div>
+            </div>
+            <div class="sim-accordion-item">
+              <div class="sim-accordion-header" data-target="acc-debuffs"><span>Debuffs</span><span class="mono">▾</span></div>
+              <div class="sim-accordion-content" id="acc-debuffs">
+                <select id="sim-debuff-select"><option value="">None</option></select>
+                <input type="number" id="sim-debuff-fdef" value="0">
+                <input type="number" id="sim-debuff-fpdmg" value="0">
+              </div>
+            </div>
+            <div class="tally-box" id="sim-tally-summary"></div>
           </div>
-          <div class="awakening-badges" id="sim-awakening-badges"></div>
-        </div>
-        <!-- 2-Page Tabs (Screenshot 073107 vs Screenshot 073112) -->
-        <div class="gear-tabs-header" style="display: flex; background: var(--bg-canvas); border-bottom: 1px solid var(--border);">
-          <button type="button" class="tab-btn active" id="tab-gear-combat" style="flex: 1; padding: 6px; font-size: 10px; font-family: var(--font-mono); font-weight: 700; border: none; border-bottom: 2px solid var(--border-focus); background: transparent; color: var(--text-primary); cursor: pointer;">[PAGE 1: COMBAT GEARS]</button>
-          <button type="button" class="tab-btn" id="tab-gear-costumes" style="flex: 1; padding: 6px; font-size: 10px; font-family: var(--font-mono); font-weight: 700; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer;">[PAGE 2: COSTUMES & ORNAMENTS]</button>
-        </div>
-        <div class="gear-inventory-grid" id="sim-gear-grid"></div>
-      </section>
+        </section>
+      </main>
 
-      <!-- Column 3: Target Context, Metrics & A/B Sandbox -->
-      <aside class="studio-col studio-col-right">
-        <div class="studio-panel-header">
-          <span class="panel-tag">[COMBAT STUDIO]</span>
-          <span class="panel-title">METRICS & A/B SANDBOX</span>
+      <!-- Bento 3: Combat Telemetry & Results HUD -->
+      <aside class="cockpit-hud bento-card" id="bento-hud">
+        <div class="bento-card-header">
+          <span class="bento-card-title">COMBAT RESULTS</span>
+          <button type="button" class="btn-text" id="sim-btn-commit" style="display: none; background: #3b82f6; color: #fff; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px;">SAVE CHANGES</button>
         </div>
 
-        <div class="target-card" id="sim-target-card">
+        <div class="target-card" id="sim-target-card" style="border-radius: var(--radius-sm); margin-bottom: 10px;">
           <div class="target-header">
             <span class="target-title">TARGET: <strong id="sim-target-name">Lord of the Dead Lv.150</strong></span>
-            <button type="button" class="btn-text" id="sim-btn-toggle-pvp">MODE: PVE</button>
+            <button type="button" class="btn-text" id="sim-btn-toggle-pvp">PVE</button>
           </div>
         </div>
 
-        <!-- PVP Manual Defender Cockpit (SSOT Output Q17:R27) -->
-        <div class="studio-section" id="sim-pvp-cockpit" style="display: none; background: rgba(239, 68, 68, 0.05); border-left: 2px solid #ef4444;">
-          <label class="studio-label" style="color: #ef4444;">TARGET PLAYER STATS (PVP DEFENDER)</label>
+        <!-- PVP Manual Defender Cockpit -->
+        <div class="studio-section" id="sim-pvp-cockpit" style="display: none; background: rgba(239, 68, 68, 0.05); border-left: 2px solid #ef4444; border-radius: var(--radius-sm); margin-bottom: 10px;">
+          <label class="studio-label" style="color: #ef4444;">PVP DEFENDER STATS</label>
           <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 4px;">
             <div class="stat-input-group">
               <span class="stat-lbl" style="width: 60px;">P.DEF</span>
@@ -418,32 +392,23 @@
           </div>
         </div>
 
-        <div class="headline-metrics">
+        <div class="awakening-badges" id="sim-awakening-badges" style="padding: 4px 0 8px 0;"></div>
+
+        <div class="headline-metrics" style="padding: 0; margin-bottom: 10px;">
           <div class="metric-block primary">
-            <span class="metric-label">60s REALTIME DPS</span>
-            <span class="metric-value mono" id="sim-metric-dps">0</span>
-            <span class="metric-sub" id="sim-metric-dpm">DPM: 0 / 3 MINS</span>
+            <span class="metric-label">AVERAGE DPS (60s)</span>
+            <span class="metric-value mono" id="sim-metric-dps" style="font-size: 22px; color: var(--hud-dps);">0</span>
+            <span class="metric-sub" id="sim-metric-dpm">Total Damage (3m): 0</span>
           </div>
           <div class="metric-block">
-            <span class="metric-label">1-HIT CRIT DAMAGE</span>
+            <span class="metric-label">CRIT HIT DAMAGE</span>
             <span class="metric-value mono" id="sim-metric-crit-hit">0</span>
-            <span class="metric-sub" id="sim-metric-noncrit-hit">Normal Attack: 0</span>
+            <span class="metric-sub" id="sim-metric-noncrit-hit">Normal Hit: 0</span>
           </div>
         </div>
 
-        <!-- Sandbox Controls (Temporarily Hidden per gameplay design) -->
-        <div class="sandbox-controls" style="display: none;">
-          <div class="sandbox-buttons">
-            <button type="button" class="btn-text active" id="sim-btn-mode-a">BUILD A</button>
-            <button type="button" class="btn-text" id="sim-btn-clone-b">CLONE TO B</button>
-            <button type="button" class="btn-text" id="sim-btn-mode-b" style="display: none;">BUILD B</button>
-            <button type="button" class="btn-text" id="sim-btn-diff" style="display: none;">A/B DIFF</button>
-          </div>
-          <div class="sandbox-diff-panel" id="sim-diff-panel" style="display: none;"></div>
-        </div>
-
-        <div class="studio-section">
-          <label class="studio-label">9-SKILL ROTATION DAMAGE PARITY MATRIX</label>
+        <div class="studio-section" style="padding: 8px 0;">
+          <label class="studio-label">SKILL DAMAGE BREAKDOWN</label>
           <div class="skill-table-container">
             <table class="sim-skill-table">
               <thead>
@@ -460,16 +425,65 @@
           </div>
         </div>
 
-        <div class="studio-section">
-          <label class="studio-label">WATERFALL DAMAGE BREAKDOWN TRACE</label>
-          <pre class="trace-terminal mono" id="sim-trace-terminal"></pre>
+        <!-- Stat Breakdown Accordion for 100% Traceability -->
+        <div class="studio-section" id="sim-breakdown-section" style="padding: 8px 0;">
+          <label class="studio-label">STAT SOURCES</label>
+          <div id="sim-stat-breakdown-accordion" class="tally-box" style="font-size: 10px; max-height: 180px; overflow-y: auto;"></div>
         </div>
 
-        <div class="studio-actions">
-          <button type="button" class="btn-action" id="sim-btn-copy-url">SHARE VIA URL HASH</button>
-          <button type="button" class="btn-action" id="sim-btn-reset-defaults">RESET TO SSOT</button>
+        <div class="studio-section" style="padding: 8px 0;">
+          <label class="studio-label">DAMAGE FORMULA LOG</label>
+          <pre class="trace-terminal mono" id="sim-trace-terminal" style="max-height: 120px;"></pre>
+        </div>
+
+        <div class="studio-actions" style="padding: 8px 0 0 0;">
+          <button type="button" class="btn-action" id="sim-btn-reset-defaults">RESET DEFAULTS</button>
         </div>
       </aside>
+
+      <!-- Bento 4: Detailed Stat Calibrator & Manual Offsets -->
+      <section class="calibrator-section bento-card" id="bento-calibrator">
+        <div class="bento-card-header">
+          <div>
+            <span class="bento-card-title">DETAILED STAT CALIBRATOR</span>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
+              Consolidated Sheet • In-Game Parity Tuning (+/- Delta Injection)
+            </div>
+          </div>
+          <button type="button" class="btn-text font-bold" id="btn-calibrator-reset" style="font-size: 10px; color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); padding: 4px 8px; border-radius: 4px;">RESET OFFSETS (0)</button>
+        </div>
+        <div class="calibrator-table-wrap" id="sim-stat-calibrator">
+          <table class="calibrator-table" id="sim-stat-calibrator-table">
+            <thead>
+              <tr>
+                <th style="text-align: left; width: 40%;">STAT NAME</th>
+                <th style="text-align: right; width: 20%;">GEAR BASE</th>
+                <th style="text-align: center; width: 20%;">[+/- OFFSET]</th>
+                <th style="text-align: right; width: 20%;">EFFECTIVE TOTAL</th>
+              </tr>
+            </thead>
+            <tbody id="calibrator-table-body">
+              <!-- Rendered dynamically by simulator_ui.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Slide-over Equipment Drawer (Right-side overlay) -->
+    <div class="slide-over-backdrop" id="sim-drawer-backdrop" style="display: none;"></div>
+    <aside class="slide-over-drawer" id="sim-equip-drawer">
+      <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-subtle);">
+        <div class="drawer-header-left" style="display: flex; align-items: center; gap: 8px;">
+          <span class="drawer-slot-badge" id="drawer-slot-tag" style="color: var(--border-focus); font-family: var(--font-mono); font-weight: 700;">[SLOT]</span>
+          <span class="drawer-title" id="drawer-slot-title" style="font-weight: 700; font-size: 13px;">SELECT EQUIPMENT</span>
+        </div>
+        <button type="button" class="btn-text" id="btn-close-equip-drawer">CLOSE</button>
+      </div>
+      <div class="drawer-body" id="drawer-equip-body" style="padding: 12px; overflow-y: auto;">
+        <!-- Dynamic content rendered by simulator_ui.js -->
+      </div>
+    </aside>
     </div>
 
     <div id="empty-state" class="empty-state" style="display: none;">
@@ -496,13 +510,129 @@
   <div class="backdrop" id="backdrop"></div>
   <aside class="drawer" id="drawer">
     <div class="drawer-header">
-      <span class="drawer-title" id="drawer-title">MONSTER DOSSIER</span>
-      <button class="btn-text" id="btn-close-drawer" type="button">ESC / CLOSE</button>
+      <span class="drawer-title" id="drawer-title">MONSTER DETAILS</span>
+      <button class="btn-text" id="btn-close-drawer" type="button">CLOSE</button>
     </div>
     <div class="drawer-body" id="drawer-body"></div>
   </aside>
 
-  <script src="/ui/js/simulator_engine.js"></script>
+  <!-- Divinity Studio Modal Popup -->
+  <div class="rox-modal-backdrop" id="divinity-modal" style="display: none;">
+    <div class="rox-modal-dialog">
+      <div class="rox-modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="rox-modal-title">DIVINITY INSCRIPTIONS</span>
+        </div>
+        <button type="button" class="btn-text font-bold" id="btn-close-divinity-modal">CLOSE</button>
+      </div>
+      <div class="div-tabs-nav" id="divinity-parts-tabs">
+        <!-- 8 Tabs: Part I to Part VIII -->
+      </div>
+      <div class="rox-modal-body" id="divinity-modal-body">
+        <!-- Rendered dynamically by simulator_ui.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Companion Studio Modal Popup -->
+  <div class="rox-modal-backdrop" id="companion-modal" style="display: none;">
+    <div class="rox-modal-dialog">
+      <div class="rox-modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="rox-modal-title">COMPANIONS (4 ACTIVE)</span>
+        </div>
+        <button type="button" class="btn-text font-bold" id="btn-close-companion-modal">CLOSE</button>
+      </div>
+      <div class="companion-tabs-nav" id="companion-tabs">
+        <button type="button" class="companion-tab-btn active" data-companion="Spark">Spark</button>
+        <button type="button" class="companion-tab-btn" data-companion="Wraith">Wraith</button>
+        <button type="button" class="companion-tab-btn" data-companion="Cloudsong">Cloudsong</button>
+        <button type="button" class="companion-tab-btn" data-companion="Bubbles">Bubbles</button>
+      </div>
+      <div class="rox-modal-body" id="companion-modal-body">
+      </div>
+    </div>
+  </div>
+
+  <!-- Base Stats Center Modal Popup -->
+  <div class="rox-modal-backdrop" id="modal-base-stats" style="display: none;">
+    <div class="rox-modal-dialog">
+      <div class="rox-modal-header">
+        <span class="rox-modal-title">BASE STATS & ATTRIBUTES</span>
+        <button type="button" class="btn-text font-bold" id="btn-close-base-stats-modal">CLOSE</button>
+      </div>
+      <div class="rox-modal-body" style="padding: 16px;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">
+          Configure allocated base attribute points. These contribute directly to primary offensive, defensive, and conversion stats.
+        </div>
+        <div class="stats-grid-6" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">STR</span>
+            <input type="number" id="modal-stat-str" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">AGI</span>
+            <input type="number" id="modal-stat-agi" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">VIT</span>
+            <input type="number" id="modal-stat-vit" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">INT</span>
+            <input type="number" id="modal-stat-int" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">DEX</span>
+            <input type="number" id="modal-stat-dex" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+          <div class="stat-input-group" style="padding: 8px;">
+            <span class="stat-lbl" style="width: 45px; font-weight: 700;">LUK</span>
+            <input type="number" id="modal-stat-luk" class="filter-input-num" min="0" max="4000" style="font-size: 13px;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combat Buffs & Progression Center Modal Popup -->
+  <div class="rox-modal-backdrop" id="modal-buffs" style="display: none;">
+    <div class="rox-modal-dialog">
+      <div class="rox-modal-header">
+        <span class="rox-modal-title">COMBAT BUFFS & TITLES</span>
+        <button type="button" class="btn-text font-bold" id="btn-close-buffs-modal">CLOSE</button>
+      </div>
+      <div class="rox-modal-body" style="padding: 16px;">
+        <label class="studio-label" style="margin-bottom: 8px;">ACTIVE COMBAT BUFFS</label>
+        <div class="buffs-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;">
+          <label class="checkbox-label"><input type="checkbox" id="modal-buff-converter" checked> Converter: Fire</label>
+          <label class="checkbox-label"><input type="checkbox" id="modal-buff-spear-flash" checked> Spear Flash (1.4x DMG)</label>
+          <label class="checkbox-label"><input type="checkbox" id="modal-buff-concentration" checked> Concentration (+15% P.ATK)</label>
+          <label class="checkbox-label"><input type="checkbox" id="modal-buff-spooky-lamp" checked> Spooky Lamp (+10% F.DMG)</label>
+          <label class="checkbox-label"><input type="checkbox" id="modal-buff-pet" checked> Active Pet Buff</label>
+        </div>
+        <label class="studio-label" style="margin-bottom: 8px;">TITLES & SHINE POINTS</label>
+        <div class="studio-row" style="margin-bottom: 10px;">
+          <label class="field-lbl" style="width: 90px;">SHINE POINTS:</label>
+          <select id="modal-shine-points" class="filter-select" style="flex: 1; font-size: 11px;">
+            <option value="0">Tier 0 pts</option>
+            <option value="180">Tier 180 pts</option>
+            <option value="200">Tier 200 pts</option>
+            <option value="250">Tier 250 pts</option>
+            <option value="300">Tier 300 pts</option>
+            <option value="350">Tier 350 pts</option>
+            <option value="400">Tier 400 pts</option>
+            <option value="450">Tier 450 pts</option>
+            <option value="500">Tier 500 pts</option>
+            <option value="600">Tier 600 pts</option>
+            <option value="700">Tier 700 pts</option>
+            <option value="800">Tier 800 pts</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/ui/js/class_adapter.js"></script>
   <script src="/ui/js/simulator_ui.js"></script>
   <script src="/ui/wiki.js"></script>
