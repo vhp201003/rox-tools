@@ -22,17 +22,17 @@ def calculate_str_patk(total_str: int) -> int:
         return math.floor(total_str * 4 + (fl ** 2) * 0.002 + (total_str - fl) * (fl / 100 * 0.2))
     return total_str * 10
 
-def calculate_luk_patk(total_luk: int) -> int:
+def calculate_luk_patk(total_luk: int) -> float:
     if total_luk < 3000:
         fl = math.floor(total_luk / 100) * 100
         return math.floor(total_luk * 0.5 + (fl ** 2) * 0.000025 + (total_luk - fl) * (fl / 100 * 0.025))
-    return int(total_luk * 1.25)
+    return total_luk * 1.25
 
-def calculate_dex_patk(total_dex: int) -> int:
+def calculate_dex_patk(total_dex: int) -> float:
     if total_dex < 3000:
         fl = math.floor(total_dex / 100) * 100
         return math.floor(total_dex * 0.2 + (fl ** 2) * 0.00001 + (total_dex - fl) * (fl / 100 * 0.01))
-    return int(total_dex * 0.5)
+    return total_dex * 0.5
 
 def calculate_net_pen(p_pen: float, final_p_pen: float, target_def: float, target_final_def: float, debuff: float = 0.0) -> float:
     raw = p_pen + final_p_pen - target_def - target_final_def - debuff

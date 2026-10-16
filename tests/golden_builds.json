@@ -1,0 +1,2468 @@
+{
+  "builds": [
+    {
+      "name": "dk_baseline_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 94413,
+        "totalDmg60s": 5664786,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 2699,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 971640
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4047,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1456920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 4858,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1748880
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 5936,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 142464
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 9101,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 18949,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 568470
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 64237,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 128474
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 46972,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 323969,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 647938
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_high_refine_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 15,
+            "upgrade": 100,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 12,
+            "upgrade": 80,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 912,
+          "M.DEF": 304,
+          "Final P.DEF": 0.792,
+          "Final M.DEF": 0.264,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 94413,
+        "totalDmg60s": 5664786,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 2699,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 971640
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4047,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1456920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 4858,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1748880
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 5936,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 142464
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 9101,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 18949,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 568470
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 64237,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 128474
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 46972,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 323969,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 647938
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_max_stats_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 3200,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 3050,
+          "luk": 3100
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 3398,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 3164,
+          "LUK": 3200,
+          "P.ATK": 43533,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 5571113,
+        "totalDmg60s": 334266810,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 159250,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 57330000
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 238874,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 85994640
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 286651,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 103194360
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 350352,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 8408448
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 1154178,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 1117947,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 33538410
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 3790187,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 7580374
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 2770990,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 19110289,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 38220578
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_high_def_target_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.95,
+          "final_p_def": 0.8,
+          "final_p_dmg_red": 0.2
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 94413,
+        "totalDmg60s": 5664786,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 2699,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 971640
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4047,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1456920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 4858,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1748880
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 5936,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 142464
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 9101,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 18949,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 568470
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 64237,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 128474
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 46972,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 323969,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 647938
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_high_pen_breakpoint_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        },
+        "stat_injection": {
+          "P.PEN": 1.2,
+          "Final P.PEN": 0.8
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.PEN": 1.2,
+          "Final P.PEN": 0.8,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 94413,
+        "totalDmg60s": 5664786,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 2699,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 971640
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4047,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1456920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 4858,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1748880
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 5936,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 142464
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 9101,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 18949,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 568470
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 64237,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 128474
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 46972,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 323969,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 647938
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_debuffs_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        },
+        "debuffs": {
+          "final_p_def": 0.2,
+          "final_p_dmg_red": 0.15
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 104981,
+        "totalDmg60s": 6298882,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 3001,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1080360
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4501,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1620360
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 5401,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1944360
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 6599,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 158376
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 10119,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 21070,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 632100
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 71428,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 142856
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 52231,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 360235,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 720470
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_pvp_baseline",
+      "class_id": "dragon_knight",
+      "is_pvp": true,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "p_def": 800,
+          "p_def_pct": 0.3,
+          "final_p_def": 0.1,
+          "final_p_dmg_red": 0.15,
+          "final_dmg_red": 0.1,
+          "p_dmg_red": 0.2,
+          "pvp_final_p_dmg_red": 0.25,
+          "pvp_p_dmg_red": 0.15,
+          "element_res": 0.1
+        },
+        "is_pvp": true
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 23932,
+        "totalDmg60s": 1435966,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 537,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 193320
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 1372,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 493920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 1530,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 550800
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 1726,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 41424
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 2232,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 3466,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 103980
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 7213,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 14426
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 5978,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 19048,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 38096
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_pvp_negative_core",
+      "class_id": "dragon_knight",
+      "is_pvp": true,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "p_def_pct": 1,
+          "final_p_def": 0.9,
+          "final_p_dmg_red": 0.9,
+          "pvp_final_p_dmg_red": 0.8,
+          "pvp_p_dmg_red": 50000,
+          "p_dmg_red": 50000
+        },
+        "is_pvp": true
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 0,
+        "totalDmg60s": 0,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 0,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 0,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 0,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 0,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 0,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 0,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_all_buffs_pve",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "base_level": 87,
+        "job_level": 17,
+        "stats": {
+          "str": 100,
+          "agi": 60,
+          "vit": 100,
+          "int": 30,
+          "dex": 39,
+          "luk": 50
+        },
+        "job_stats": {
+          "str": 42,
+          "agi": 19,
+          "vit": 34,
+          "int": 15,
+          "dex": 30,
+          "luk": 16
+        },
+        "battle_achievement": {
+          "str": 72,
+          "vit": 72,
+          "final_pdmg_bonus": 0.24,
+          "fire_enhance": 0.3,
+          "max_hp_pct": 0.24,
+          "final_pdmg_red": 0.16
+        },
+        "loadout": {
+          "weapon": {
+            "name": "Teeth Bone Broadsword",
+            "type": "2H Sword",
+            "level": 1,
+            "refine": 10,
+            "upgrade": 60,
+            "enchant_city": "Prontera",
+            "enchant_lv": 6,
+            "cards": [
+              "Minorous Card",
+              "Skeleton Worker Card"
+            ]
+          },
+          "clothes": {
+            "name": "Vesper's Shield",
+            "type": "Clothes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "cloak": {
+            "name": "Vesper's Cloak",
+            "type": "Cloak",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "shoes": {
+            "name": "Vesper's Shoes",
+            "type": "Shoes",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 30,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_1": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "accessory_2": {
+            "name": "Autumn Earrings",
+            "type": "Accessory",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "talisman": {
+            "name": "Autumn Amulet",
+            "type": "Talisman",
+            "level": 1,
+            "refine": 6,
+            "upgrade": 15,
+            "enchant_city": "Prontera",
+            "enchant_lv": 4,
+            "cards": []
+          },
+          "costume_head": {
+            "name": "Default Headgear",
+            "type": "Head",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_eyes": {
+            "name": "Default Face",
+            "type": "Face",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_mouth": {
+            "name": "Default Mouth",
+            "type": "Mouth",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          },
+          "costume_back": {
+            "name": "Default Back",
+            "type": "Back",
+            "level": 1,
+            "refine": 0,
+            "upgrade": 0,
+            "enchant_city": "",
+            "enchant_lv": 0,
+            "cards": []
+          }
+        },
+        "buffs": {
+          "elemental_converter": "Fire",
+          "spear_flash": true,
+          "concentration": true,
+          "spooky_lamp": true,
+          "pet_active": true
+        },
+        "target": {
+          "name": "Lord of the Dead Lv.150",
+          "level": 150,
+          "element": "Shadow",
+          "race": "Formless",
+          "size": "Large",
+          "p_def": 1200,
+          "p_def_pct": 0.4,
+          "final_p_def": 0.15,
+          "final_p_dmg_red": 0.2
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 298,
+          "AGI": 163,
+          "VIT": 290,
+          "INT": 129,
+          "DEX": 153,
+          "LUK": 150,
+          "P.ATK": 738,
+          "Final P.DMG Bonus": 0.54,
+          "Fire Enhance": 0.3,
+          "Max HP%": 0.24,
+          "Final P.DMG RED": 0.16,
+          "M.ATK%": 0.06,
+          "Crit": 120,
+          "P.DEF": 285,
+          "M.DEF": 95,
+          "Final P.DEF": 0.396,
+          "Final M.DEF": 0.132,
+          "P.ATK%": 0.15,
+          "Hit": 50
+        },
+        "awakenings": {
+          "refineAwakening": 0.1,
+          "upgradeAwakening": 0.1,
+          "enchantAwakening": 0
+        },
+        "dps": 94413,
+        "totalDmg60s": 5664786,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 2699,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 971640
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 4047,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1456920
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 4858,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 1748880
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 5936,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 142464
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 9101,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 18949,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 568470
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 64237,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 128474
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 46972,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 323969,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 647938
+          }
+        ]
+      }
+    },
+    {
+      "name": "dk_zero_stats_edge",
+      "class_id": "dragon_knight",
+      "is_pvp": false,
+      "input": {
+        "stats": {
+          "str": 0,
+          "agi": 0,
+          "vit": 0,
+          "int": 0,
+          "dex": 0,
+          "luk": 0
+        },
+        "job_stats": {},
+        "battle_achievement": {},
+        "loadout": {},
+        "buffs": {},
+        "target": {
+          "p_def_pct": 0,
+          "final_p_def": 0
+        }
+      },
+      "expected": {
+        "stats": {
+          "STR": 0,
+          "AGI": 0,
+          "VIT": 0,
+          "INT": 0,
+          "DEX": 0,
+          "LUK": 0,
+          "P.ATK": 0
+        },
+        "awakenings": {
+          "refineAwakening": 0,
+          "upgradeAwakening": 0,
+          "enchantAwakening": 0
+        },
+        "dps": 0,
+        "totalDmg60s": 0,
+        "skills": [
+          {
+            "skillId": "normal_attack",
+            "skillName": "Normal Attack",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "double_blow",
+            "skillName": "Double Blow",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "wind_cutter",
+            "skillName": "Wind Cutter",
+            "damagePerHit": 0,
+            "hitsIn60s": 360,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "storm_slash",
+            "skillName": "Storm Slash",
+            "damagePerHit": 0,
+            "hitsIn60s": 24,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "ignition_break",
+            "skillName": "Ignition Break",
+            "damagePerHit": 0,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "dusk_claymore",
+            "skillName": "Dusk Claymore",
+            "damagePerHit": 0,
+            "hitsIn60s": 30,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "demolition",
+            "skillName": "Demolition",
+            "damagePerHit": 0,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "phantom",
+            "skillName": "Phantom",
+            "damagePerHit": 0,
+            "hitsIn60s": 0,
+            "totalSkillDmg": 0
+          },
+          {
+            "skillId": "spooky_lamp",
+            "skillName": "Spooky Lamp",
+            "damagePerHit": 0,
+            "hitsIn60s": 2,
+            "totalSkillDmg": 0
+          }
+        ]
+      }
+    }
+  ]
+}
