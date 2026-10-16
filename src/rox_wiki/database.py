@@ -554,3 +554,228 @@ def search_shadow_weapons(
     finally:
         conn.close()
 
+
+def init_profiles_table() -> None:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = get_db_connection()
+    if not conn:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS profiles (
+                id TEXT PRIMARY KEY,
+                class_id TEXT NOT NULL DEFAULT 'dragon_knight',
+                build_data TEXT NOT NULL,
+                computed_results TEXT,
+                computed_dps INTEGER DEFAULT 0,
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_profiles_updated ON profiles(updated_at DESC)")
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_profile(profile_id: str) -> Optional[Dict[str, Any]]:
+    init_profiles_table()
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        data = dict(row)
+        try:
+            data["build_data"] = json.loads(data["build_data"])
+        except Exception:
+            pass
+        if data.get("computed_results"):
+            try:
+                data["computed_results"] = json.loads(data["computed_results"])
+            except Exception:
+                pass
+        return data
+    finally:
+        conn.close()
+
+
+def upsert_profile(
+    profile_id: str,
+    class_id: str,
+    build_data: Any,
+    computed_results: Optional[Any] = None,
+    computed_dps: int = 0
+) -> Dict[str, Any]:
+    init_profiles_table()
+    conn = get_db_connection()
+    if not conn:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+    try:
+        cur = conn.cursor()
+        build_data_str = json.dumps(build_data) if isinstance(build_data, (dict, list)) else str(build_data)
+        computed_results_str = (
+            json.dumps(computed_results)
+            if isinstance(computed_results, (dict, list))
+            else (str(computed_results) if computed_results is not None else None)
+        )
+
+        cur.execute("""
+            INSERT INTO profiles (id, class_id, build_data, computed_results, computed_dps, updated_at)
+            VALUES (?, ?, ?, ?, ?, datetime('now'))
+            ON CONFLICT(id) DO UPDATE SET
+                class_id = excluded.class_id,
+                build_data = excluded.build_data,
+                computed_results = excluded.computed_results,
+                computed_dps = excluded.computed_dps,
+                updated_at = datetime('now')
+        """, (profile_id, class_id, build_data_str, computed_results_str, computed_dps))
+        conn.commit()
+
+        cur.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,))
+        row = cur.fetchone()
+        data = dict(row)
+        try:
+            data["build_data"] = json.loads(data["build_data"])
+        except Exception:
+            pass
+        if data.get("computed_results"):
+            try:
+                data["computed_results"] = json.loads(data["computed_results"])
+            except Exception:
+                pass
+        return data
+    finally:
+        conn.close()
+
+
+def delete_profile(profile_id: str) -> bool:
+    init_profiles_table()
+    conn = get_db_connection()
+    if not conn:
+        return False
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        conn.close()
+
+
+# --- SIMULATOR SSOT QUERIES ---
+
+def get_sim_class_registry(class_id: str) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_class_registry WHERE class_id = ?", (class_id,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        res = dict(row)
+        res["growth_table"] = json.loads(res.get("growth_table_json") or "{}")
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_enchant_rules(city_name: Optional[str] = None, slot_category: Optional[str] = None) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        query = "SELECT * FROM sim_enchant_catalog WHERE 1=1"
+        params: List[Any] = []
+        if city_name:
+            query += " AND city_name = ?"
+            params.append(city_name)
+        if slot_category:
+            query += " AND slot_category = ?"
+            params.append(slot_category)
+        query += " ORDER BY city_name ASC, stat_name ASC"
+        cur.execute(query, params)
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+
+def get_sim_equipment_item(item_name: str) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_equipment_catalog WHERE item_name = ?", (item_name,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        res = dict(row)
+        res["base_stats"] = json.loads(res.get("base_stats_json") or "{}")
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_equipment_scale(scale_type: str, scale_id: int, level: int) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT stats_json FROM sim_equipment_scales WHERE scale_type = ? AND scale_id = ? AND level = ?",
+            (scale_type, scale_id, level)
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return json.loads(row["stats_json"])
+    finally:
+        conn.close()
+
+
+def get_sim_passive_milestones(system_type: str) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_passive_milestones WHERE system_type = ? ORDER BY level_or_point ASC", (system_type,))
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            d["stats"] = json.loads(d.get("stats_json") or "{}")
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_combat_rules(rule_type: str) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_combat_rules WHERE rule_type = ?", (rule_type,))
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            if d.get("extra_json"):
+                d["extra"] = json.loads(d["extra_json"])
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
+
+

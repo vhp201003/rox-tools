@@ -8,13 +8,18 @@ SRC_DIR = Path(__file__).resolve().parent.parent
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from fastapi import FastAPI, HTTPException
+import json
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, Request, Path as FastPath
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from rox_wiki import database as db
 from rox_wiki import level_scaler as scaler
+from rox_wiki import engine
+from rox_wiki.class_adapters import get_adapter
+from rox_wiki.schemas import CommitRequest, ProfileResponse
 
 STATIC_DIR = SRC_DIR.parent / "data" / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
@@ -22,13 +27,51 @@ STATIC_DIR.mkdir(parents=True, exist_ok=True)
 UI_DIR = Path(__file__).resolve().parent / "static"
 UI_DIR.mkdir(parents=True, exist_ok=True)
 
+STATIC_DATA_PATH = UI_DIR / "data" / "static_game_data.json"
+DATA_DIR = UI_DIR / "data"
+
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
 INDEX_FILE = TEMPLATES_DIR / "index.html"
 
-app = FastAPI(title="ROX Wiki")
+UUID_REGEX = r"^[0-9a-fA-F-]{36}$"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if STATIC_DATA_PATH.exists():
+        with open(STATIC_DATA_PATH, "r", encoding="utf-8") as f:
+            app.state.static_data = json.load(f)
+    else:
+        app.state.static_data = {}
+
+    app.state.class_manifests = {}
+    if DATA_DIR.exists():
+        for m_file in DATA_DIR.glob("*_manifest.json"):
+            try:
+                with open(m_file, "r", encoding="utf-8") as f:
+                    manifest = json.load(f)
+                    if cid := manifest.get("class_id"):
+                        app.state.class_manifests[cid] = manifest
+            except Exception:
+                pass
+
+    db.init_profiles_table()
+    yield
+
+
+app = FastAPI(title="ROX Wiki", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.mount("/ui", StaticFiles(directory=str(UI_DIR)), name="ui")
+
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    favicon_path = UI_DIR / "favicon.ico"
+    if favicon_path.exists():
+        return FileResponse(favicon_path, media_type="image/x-icon")
+    raise HTTPException(status_code=404, detail="Favicon not found")
 
 
 @app.get("/")
@@ -157,7 +200,148 @@ def get_shadow_weapon_detail_endpoint(sw_id: int):
     return sw
 
 
+# --- SIMULATOR REFERENCE APIS (SSOT) ---
+
+@app.get("/api/sim/reference/class/{class_id}")
+def get_sim_class_endpoint(class_id: str):
+    data = db.get_sim_class_registry(class_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Class not found in registry")
+    return data
+
+
+@app.get("/api/sim/reference/enchant-rules")
+def get_sim_enchant_rules_endpoint(city: Optional[str] = None, slot_category: Optional[str] = None):
+    return db.get_sim_enchant_rules(city_name=city, slot_category=slot_category)
+
+
+@app.get("/api/sim/reference/equipment/{item_name}")
+def get_sim_equipment_endpoint(item_name: str):
+    data = db.get_sim_equipment_item(item_name)
+    if not data:
+        raise HTTPException(status_code=404, detail="Equipment not found in catalog")
+    return data
+
+
+@app.get("/api/sim/reference/milestones/{system_type}")
+def get_sim_milestones_endpoint(system_type: str):
+    return db.get_sim_passive_milestones(system_type)
+
+
+@app.get("/api/sim/reference/combat-rules/{rule_type}")
+def get_sim_combat_rules_endpoint(rule_type: str):
+    return db.get_sim_combat_rules(rule_type)
+
+
+@app.get("/api/sim/profiles/{profile_id}")
+
+def get_profile_endpoint(profile_id: str = FastPath(..., pattern=UUID_REGEX)):
+    profile = db.get_profile(profile_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
+
+
+@app.post("/api/sim/profiles/{profile_id}")
+def create_profile_endpoint(
+    req: CommitRequest,
+    request: Request,
+    profile_id: str = FastPath(..., pattern=UUID_REGEX)
+):
+    static_data = getattr(request.app.state, "static_data", {})
+    manifests = getattr(request.app.state, "class_manifests", {})
+    adapter = get_adapter(req.build.class_id, manifests)
+
+    build_dict = req.build.model_dump()
+    tally = engine.tally_player_stats(build_dict, static_data, adapter.get_primary_conversion_fn())
+
+    target_stats = req.build.pvp_target if (req.build.is_pvp and req.build.pvp_target) else req.build.target
+    skills = adapter.get_skills()
+
+    timeline = engine.simulate_combat_timeline(
+        skills,
+        tally["stats"],
+        target_stats,
+        req.build.buffs,
+        static_data,
+        req.build.debuffs,
+        req.build.is_pvp
+    )
+
+    computed_results = {
+        "dps": timeline["dps"],
+        "totalDmg60s": timeline["totalDmg60s"],
+        "totalDmg3m": timeline["totalDmg3m"],
+        "talliedStats": tally["stats"],
+        "statBreakdown": tally.get("breakdown", {}),
+        "awakenings": tally["awakenings"],
+        "hitsBreakdown": timeline["hitsBreakdown"]
+    }
+
+    res = db.upsert_profile(
+        profile_id,
+        req.build.class_id,
+        json.dumps(build_dict),
+        json.dumps(computed_results),
+        timeline["dps"]
+    )
+    return res
+
+
+@app.post("/api/sim/calculate")
+def calculate_stateless_endpoint(req: CommitRequest, request: Request):
+    """Stateless real-time calculation endpoint without writing to database."""
+    static_data = getattr(request.app.state, "static_data", {})
+    manifests = getattr(request.app.state, "class_manifests", {})
+    adapter = get_adapter(req.build.class_id, manifests)
+
+    build_dict = req.build.model_dump()
+    tally = engine.tally_player_stats(build_dict, static_data, adapter.get_primary_conversion_fn())
+
+    target_stats = req.build.pvp_target if (req.build.is_pvp and req.build.pvp_target) else req.build.target
+    skills = adapter.get_skills()
+
+    timeline = engine.simulate_combat_timeline(
+        skills,
+        tally["stats"],
+        target_stats,
+        req.build.buffs,
+        static_data,
+        req.build.debuffs,
+        req.build.is_pvp
+    )
+
+    return {
+        "dps": timeline["dps"],
+        "totalDmg60s": timeline["totalDmg60s"],
+        "totalDmg3m": timeline["totalDmg3m"],
+        "talliedStats": tally["stats"],
+        "statBreakdown": tally.get("breakdown", {}),
+        "awakenings": tally["awakenings"],
+        "hitsBreakdown": timeline["hitsBreakdown"]
+    }
+
+
+
+@app.put("/api/sim/profiles/{profile_id}")
+def update_profile_endpoint(
+    req: CommitRequest,
+    request: Request,
+    profile_id: str = FastPath(..., pattern=UUID_REGEX)
+):
+    return create_profile_endpoint(req, request, profile_id)
+
+
+@app.delete("/api/sim/profiles/{profile_id}")
+def delete_profile_endpoint(profile_id: str = FastPath(..., pattern=UUID_REGEX)):
+    deleted = db.delete_profile(profile_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return {"status": "deleted", "id": profile_id}
+
+
 def run():
+
     uvicorn.run(app, host="127.0.0.1", port=8001, reload=False)
 
 

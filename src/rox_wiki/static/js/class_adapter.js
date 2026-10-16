@@ -18,9 +18,6 @@
     }
 
     calculatePrimaryConversion(baseStats, jobStats) {
-      if (global.RoxSimulatorEngine) {
-        return global.RoxSimulatorEngine.calculatePrimaryConversions(baseStats, jobStats);
-      }
       return { totalStats: {}, convertedPatk: 0 };
     }
   }
