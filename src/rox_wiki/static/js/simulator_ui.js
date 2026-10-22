@@ -37,6 +37,11 @@
   let autoCalcTimeout = null;
   let autoCalcAbortController = null;
 
+  
+  function renderSimulationResults() {
+    renderSimulatorUI();
+  }
+
   function triggerAutoCalculate() {
     if (autoCalcTimeout) clearTimeout(autoCalcTimeout);
     autoCalcTimeout = setTimeout(async () => {
@@ -717,6 +722,77 @@
   function renderGearSlots() {
     renderPaperDoll();
   }
+  function renderStudioWings(activeSlotKey) {
+    const leftWing = document.getElementById('gear-modal-wing-left');
+    const rightWing = document.getElementById('gear-modal-wing-right');
+    if (!leftWing || !rightWing) return;
+
+    const build = getActiveBuild();
+    const loadout = build.loadout || {};
+    const isCostume = activeSlotKey.startsWith('costume_');
+    const is2H = isTwoHandedWeapon(loadout.weapon);
+
+    // Update Modal Tab Switcher active state
+    const tabCombat = document.getElementById('modal-tab-gear-combat');
+    const tabCostumes = document.getElementById('modal-tab-gear-costumes');
+    if (tabCombat) tabCombat.classList.toggle('active', !isCostume);
+    if (tabCostumes) tabCostumes.classList.toggle('active', isCostume);
+
+    const leftSlots = isCostume ? COSTUME_LEFT_SLOTS : COMBAT_LEFT_SLOTS;
+    const rightSlots = isCostume ? COSTUME_RIGHT_SLOTS : COMBAT_RIGHT_SLOTS;
+
+    const renderWingCard = (s) => {
+      const item = loadout[s.key] || { name: 'Empty', refine: 0, upgrade: 0, enchant_lines: [], cards: [] };
+      const isActive = s.key === activeSlotKey;
+      const isShieldLocked = s.key === 'shield' && is2H;
+      const quality = item.quality || (isCostume ? 'purple' : 'gold');
+      const tierClass = 'tier-' + (quality.toLowerCase() || 'white');
+      const cardsList = Array.isArray(item.cards) ? item.cards : [];
+      let maxSockets = s.key === 'weapon' ? (is2H ? 5 : 3) : (s.key === 'shield' && is2H ? 0 : 2);
+
+      let dotsHtml = '';
+      for (let i = 0; i < maxSockets; i++) {
+        const isFilled = !!cardsList[i];
+        dotsHtml += `<span class="card-socket-dot ${isFilled ? 'filled' : ''}" title="${cardsList[i] || 'Empty Socket'}"></span>`;
+      }
+
+      let encBrief = '';
+      if (!isCostume && Array.isArray(item.enchant_lines) && item.enchant_lines.length > 0) {
+        const l1 = item.enchant_lines[0];
+        const sameCity = item.enchant_lines.every(l => l.city === l1.city);
+        encBrief = sameCity ? `${l1.city.split(' ')[0]} L${l1.level || 0}` : 'Enchanted (3L)';
+      }
+
+      return `
+        <div class="wing-slot-card ${isActive ? 'active-editing' : ''} ${isShieldLocked ? 'slot-locked' : ''}" data-slot="${s.key}">
+          <div class="wing-slot-header">
+            <span class="wing-slot-tag">[${s.label}]</span>
+            <span class="wing-slot-tier ${tierClass}">${quality.toUpperCase()}</span>
+          </div>
+          <div class="wing-slot-name" title="${item.name || ''}">${item.name || 'Empty'}</div>
+          <div class="wing-slot-pills">
+            ${!isCostume ? `
+              <span class="pill-refine">+${item.refine || 0}</span>
+              <span class="pill-upgrade">U.${item.upgrade || 0}</span>
+            ` : '<span class="pill-upgrade" style="color: #c084fc; background: rgba(168, 85, 247, 0.12);">COSTUME</span>'}
+            ${encBrief ? `<span class="pill-enchant">${encBrief}</span>` : ''}
+          </div>
+          <div class="wing-slot-cards">${dotsHtml}</div>
+        </div>
+      `;
+    };
+
+    leftWing.innerHTML = leftSlots.map(renderWingCard).join('');
+    rightWing.innerHTML = rightSlots.map(renderWingCard).join('');
+
+    // Bind click events on wing cards
+    [...leftSlots, ...rightSlots].forEach(s => {
+      const el = document.querySelector(`.wing-slot-card[data-slot="${s.key}"]`);
+      if (el && !(s.key === 'shield' && is2H)) {
+        el.onclick = () => openEquipDrawer(s.key);
+      }
+    });
+  }
 
   function openEquipDrawer(slotKey) {
     simState.activeDrawerSlot = slotKey;
@@ -739,6 +815,10 @@
     if (slotBadge) slotBadge.textContent = '[' + slotInfo.label + ']';
     if (slotTitle) slotTitle.textContent = item.name || 'EMPTY SLOT';
 
+    // Render 2 Wings (Left & Right)
+    renderStudioWings(slotKey);
+
+    // Render Center Dynamic Setup Editor
     renderDrawerContent(slotInfo, item);
 
     backdrop.style.display = 'block';
@@ -753,6 +833,7 @@
     document.querySelectorAll('.doll-slot').forEach(el => el.classList.remove('active-editing'));
     simState.activeDrawerSlot = null;
     renderPaperDoll();
+    updateBentoSummaryTiles();
   }
 
   function renderDrawerContent(slotInfo, item) {
@@ -919,6 +1000,7 @@
         if (dispRef) dispRef.textContent = '+' + num;
         item.refine = num;
         renderPaperDoll();
+        renderStudioWings(slotKey);
         markDirty();
       };
       sliderRef.oninput = (e) => syncRefine(e.target.value);
@@ -936,6 +1018,7 @@
         if (dispUpg) dispUpg.textContent = 'Lv.' + num;
         item.upgrade = num;
         renderPaperDoll();
+        renderStudioWings(slotKey);
         markDirty();
       };
       sliderUpg.oninput = (e) => syncUpgrade(e.target.value);
@@ -957,6 +1040,7 @@
           item.enchant_lines[lineIdx].stat = availableStats[0] || 'STR';
           renderDrawerContent(slotInfo, item);
           renderPaperDoll();
+          renderStudioWings(slotKey);
           markDirty();
         }
       };
@@ -968,6 +1052,7 @@
         if (item.enchant_lines?.[lineIdx]) {
           item.enchant_lines[lineIdx].stat = sel.value;
           renderPaperDoll();
+          renderStudioWings(slotKey);
           markDirty();
         }
       };
@@ -981,6 +1066,7 @@
           if (curLv < 15) item.enchant_lines[lineIdx].level = curLv + 1;
           renderDrawerContent(slotInfo, item);
           renderPaperDoll();
+          renderStudioWings(slotKey);
           markDirty();
         }
       };
@@ -994,6 +1080,7 @@
           item.enchant_lines[lineIdx].level = Math.max(0, curLv - 1);
           renderDrawerContent(slotInfo, item);
           renderPaperDoll();
+          renderStudioWings(slotKey);
           markDirty();
         }
       };
@@ -1014,6 +1101,7 @@
           item.cards = item.cards.filter(Boolean);
           renderDrawerContent(slotInfo, item);
           renderPaperDoll();
+          renderStudioWings(slotKey);
           markDirty();
         }
       };
@@ -1071,6 +1159,7 @@
         if (b.loadout?.[slotKey]) {
           b.loadout[slotKey].name = it.dataset.name;
           renderSimulatorUI();
+          renderStudioWings(slotKey);
           markDirty();
         }
         modal.remove();
@@ -1128,6 +1217,7 @@
             b.loadout[slotKey].cards[socketIdx] = it.dataset.name;
           }
           renderSimulatorUI();
+          renderStudioWings(slotKey);
           markDirty();
         }
         modal.remove();
@@ -1787,8 +1877,8 @@
   }
 
   function renderStatCalibrator() {
-    const tbody = document.getElementById('calibrator-table-body');
-    if (!tbody) return;
+    const tbodies = document.querySelectorAll('#calibrator-table-body');
+    if (!tbodies.length) return;
 
     const build = getActiveBuild();
     if (!build) return;
@@ -1838,9 +1928,11 @@
       });
     });
 
-    tbody.innerHTML = html;
+    tbodies.forEach(tb => {
+      tb.innerHTML = html;
+    });
 
-    tbody.querySelectorAll('.calibrator-offset-input').forEach(input => {
+    document.querySelectorAll('.calibrator-offset-input').forEach(input => {
       input.addEventListener('focus', () => {
         if (input.value === '0') input.value = '';
       });
@@ -1912,6 +2004,24 @@
     const build = getActiveBuild();
     if (!build) return;
 
+    // 0. Master Gear Summary
+    const loadout = build.loadout || {};
+    const equippedCombatCount = COMBAT_SLOTS.filter(s => loadout[s.key]?.name && loadout[s.key].name !== 'Empty').length;
+    const gearBadgeEl = document.getElementById('card-gear-badge');
+    const gearSummaryEl = document.getElementById('card-gear-summary');
+    if (gearBadgeEl) gearBadgeEl.textContent = `${equippedCombatCount}/8 COMBAT`;
+    if (gearSummaryEl) {
+      const weaponItem = loadout.weapon || {};
+      const refineVal = weaponItem.refine ?? 0;
+      gearSummaryEl.innerHTML = `
+        <div>
+          <span style="font-weight: 700; color: var(--text-primary);">${weaponItem.name || 'Weapon'} +${refineVal}</span>
+          <span style="color: var(--text-muted);"> · ${equippedCombatCount}/8 Combat Slots · 6 Costumes</span>
+        </div>
+        <div class="card-key-gain" style="font-size: 11px;">Awakening: Refine III · Upgrade IV</div>
+      `;
+    }
+
     // 1. Base Stats
     const s = build.stats || {};
     const baseSummaryEl = document.getElementById('tile-base-stats-summary');
@@ -1958,6 +2068,20 @@
     }
   }
 
+  function openStatCalibratorModal() {
+    const modal = document.getElementById("modal-stat-calibrator");
+    if (!modal) return;
+    renderSimulatorUI();
+    renderStatCalibrator();
+    modal.style.display = "flex";
+  }
+
+  function closeStatCalibratorModal() {
+    const modal = document.getElementById("modal-stat-calibrator");
+    if (modal) modal.style.display = "none";
+    renderSimulatorUI();
+  }
+
   function openBaseStatsModal() {
     const modal = document.getElementById('modal-base-stats');
     if (!modal) return;
@@ -2002,6 +2126,91 @@
     if (modal) modal.style.display = 'none';
     renderSimulatorUI();
   }
+  // ==========================================================================
+  // WORKSPACE DUAL-STATE INSPECTOR CONTROLLER
+  // ==========================================================================
+
+  const workspaceState = {
+    currentView: 'overview',
+    activeSubsystem: 'gear',
+    subsystemsOrder: ['gear', 'costumes', 'stats', 'divinity', 'companions', 'buffs', 'target', 'calibrator'],
+    subsystemsMeta: {
+      gear: { title: 'COMBAT GEAR (8 SLOTS)' },
+      costumes: { title: 'COSTUMES & WARDROBE' },
+      stats: { title: 'BASE ATTRIBUTES' },
+      divinity: { title: 'DIVINITY INSCRIPTIONS' },
+      companions: { title: 'COMPANIONS & PET SANCTUARY' },
+      buffs: { title: 'BUFFS & TITLES' },
+      target: { title: 'TARGET DUMMY & RESILIENCE' },
+      calibrator: { title: 'DETAILED STAT CALIBRATOR' }
+    }
+  };
+
+  function openSubsystemInspector(subsystemKey) {
+    if (!subsystemKey) return;
+
+    // 1. Direct Modal Popups: Launch Master Gear Studio & Subsystem Popups directly over Overview
+    if (subsystemKey === 'gear') {
+      openEquipDrawer('weapon');
+      return;
+    }
+    if (subsystemKey === 'costumes') {
+      openEquipDrawer('costume_head');
+      return;
+    }
+    if (subsystemKey === 'stats') {
+      openBaseStatsModal();
+      return;
+    }
+    if (subsystemKey === 'divinity') {
+      openDivinityModal();
+      return;
+    }
+    if (subsystemKey === 'companions') {
+      openCompanionModal();
+      return;
+    }
+    if (subsystemKey === 'buffs') {
+      openBuffsModal();
+      return;
+    }
+    if (subsystemKey === 'target') {
+      const tgt = document.getElementById('sim-target-card');
+      if (tgt) {
+        tgt.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        tgt.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+        tgt.style.borderColor = '#38bdf8';
+        tgt.style.boxShadow = '0 0 16px rgba(56, 189, 248, 0.4)';
+        setTimeout(() => {
+          tgt.style.borderColor = '';
+          tgt.style.boxShadow = '';
+        }, 1200);
+      }
+      return;
+    }
+
+    // 2. Stat Tuning Modal Popup
+    if (subsystemKey === 'calibrator') {
+      openStatCalibratorModal();
+      return;
+    }
+  }
+  function closeSubsystemInspector() {
+    workspaceState.currentView = 'overview';
+    const overviewView = document.getElementById('workspace-view-overview');
+    const inspectorView = document.getElementById('workspace-view-inspector');
+    if (overviewView) overviewView.style.display = 'block';
+    if (inspectorView) inspectorView.style.display = 'none';
+  }
+
+  function stepSubsystemInspector(direction) {
+    const order = workspaceState.subsystemsOrder;
+    let idx = order.indexOf(workspaceState.activeSubsystem);
+    if (idx === -1) idx = 0;
+    let nextIdx = (idx + direction + order.length) % order.length;
+    openSubsystemInspector(order[nextIdx]);
+  }
+
 
   function bindSimulatorEvents() {
     const btnCommit = document.getElementById('sim-btn-commit');
@@ -2010,6 +2219,97 @@
         commitBuild();
       });
     }
+    // 8-Card Overview Card Clicks
+    document.querySelectorAll('.overview-card[data-subsystem]').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        const sub = card.dataset.subsystem;
+        if (sub) openSubsystemInspector(sub);
+      });
+    });
+
+    // Inspector Nav Controls
+    const btnBackOverview = document.getElementById('btn-inspector-back');
+    if (btnBackOverview) {
+      btnBackOverview.addEventListener('click', () => {
+        closeSubsystemInspector();
+      });
+    }
+
+    const btnInspectorPrev = document.getElementById('btn-inspector-prev');
+    if (btnInspectorPrev) {
+      btnInspectorPrev.addEventListener('click', () => {
+        stepSubsystemInspector(-1);
+      });
+    }
+
+    const btnInspectorNext = document.getElementById('btn-inspector-next');
+    if (btnInspectorNext) {
+      btnInspectorNext.addEventListener('click', () => {
+        stepSubsystemInspector(1);
+      });
+    }
+
+    // Jumper Strip Buttons
+    document.querySelectorAll('#inspector-jumper-strip .jumper-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sub = btn.dataset.jump;
+        if (sub) openSubsystemInspector(sub);
+      });
+    });
+
+    // Global Keyboard Ergonomics
+    document.addEventListener('keydown', (e) => {
+      if (!simState.initialized) return;
+      const simView = document.getElementById('simulator-view');
+      if (!simView || simView.style.display === 'none') return;
+
+      const isInput = ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName);
+
+      if (e.key === 'Escape') {
+        const activePickerModal = document.getElementById('sim-active-modal');
+        if (activePickerModal) {
+          activePickerModal.remove();
+          return;
+        }
+        const drawer = document.getElementById('sim-equip-drawer');
+        if (drawer && drawer.classList.contains('open')) {
+          closeEquipDrawer();
+          return;
+        }
+        const divModal = document.getElementById('divinity-modal');
+        if (divModal && divModal.style.display === 'flex') {
+          closeDivinityModal();
+          return;
+        }
+        const compModal = document.getElementById('companion-modal');
+        if (compModal && compModal.style.display === 'flex') {
+          closeCompanionModal();
+          return;
+        }
+        const baseModal = document.getElementById('modal-base-stats');
+        if (baseModal && baseModal.style.display === 'flex') {
+          closeBaseStatsModal();
+          return;
+        }
+        const buffsModal = document.getElementById('modal-buffs');
+        if (buffsModal && buffsModal.style.display === 'flex') {
+          closeBuffsModal();
+          return;
+        }
+        if (workspaceState.currentView === 'inspector') {
+          closeSubsystemInspector();
+        }
+      } else if (!isInput && e.key >= '1' && e.key <= '8') {
+        const num = parseInt(e.key, 10);
+        const sub = workspaceState.subsystemsOrder[num - 1];
+        if (sub) {
+          e.preventDefault();
+          openSubsystemInspector(sub);
+        }
+      }
+    });
+
     // 2-Page Gear Tabs
     const tabCombat = document.getElementById('tab-gear-combat');
     const tabCostumes = document.getElementById('tab-gear-costumes');
@@ -2021,6 +2321,20 @@
     if (tabCostumes) {
       tabCostumes.addEventListener('click', () => {
         switchPaperDollTab('costumes');
+      });
+    }
+
+    // Master Gear Studio Modal Tab Switcher
+    const modalTabCombat = document.getElementById('modal-tab-gear-combat');
+    const modalTabCostumes = document.getElementById('modal-tab-gear-costumes');
+    if (modalTabCombat) {
+      modalTabCombat.addEventListener('click', () => {
+        openEquipDrawer('weapon');
+      });
+    }
+    if (modalTabCostumes) {
+      modalTabCostumes.addEventListener('click', () => {
+        openEquipDrawer('costume_head');
       });
     }
 
@@ -2171,6 +2485,16 @@
         }
       });
     }
+  function closeStatCalibratorModal() {
+    const modal = document.getElementById('modal-stat-calibrator');
+    if (modal) modal.style.display = 'none';
+    renderSimulatorUI();
+  }
+
+  const btnCloseCalibrator = document.getElementById('btn-close-calibrator-modal');
+  if (btnCloseCalibrator) {
+    btnCloseCalibrator.addEventListener('click', closeStatCalibratorModal);
+  }
 
     // Accordion Header Toggle (Directly opens Divinity Modal on click per user requirement)
     document.querySelectorAll('.sim-accordion-header').forEach(header => {
@@ -2566,6 +2890,8 @@
     init: initSimulatorStudio,
     setTargetFromWiki,
     recalculate: () => markDirty('external'),
-    commit: commitBuild
+    commit: commitBuild,
+    openStatCalibratorModal,
+    openSubsystemInspector
   };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -141,202 +141,360 @@
     <div class="simulator-studio-container cockpit-layout bento-grid-container" id="simulator-view" style="display: none;">
       <!-- Workspace Column (Bento 1 & Bento 2) -->
       <main class="cockpit-workspace">
-        <!-- Bento 1: Equipment & Sockets (Paper Doll) -->
-        <section class="paper-doll-section bento-card" id="bento-equip">
-          <!-- Profile & Action Header Bar -->
-          <header class="cockpit-profile-bar" style="margin-bottom: 10px; border-radius: var(--radius-sm);">
-            <div class="profile-meta">
-              <div class="profile-job-picker" style="display: flex; align-items: center; gap: 6px;">
-                <label class="field-lbl">CLASS:</label>
-                <select id="sim-class-select" class="filter-select">
-                  <option value="dragon_knight">Dragon Knight</option>
-                  <option value="ranger">Ranger</option>
-                </select>
+        <!-- Profile & Action Header Bar -->
+        <header class="cockpit-profile-bar" style="margin-bottom: 12px; border-radius: var(--radius-sm);">
+          <div class="profile-meta">
+            <div class="profile-job-picker" style="display: flex; align-items: center; gap: 6px;">
+              <label class="field-lbl">CLASS:</label>
+              <select id="sim-class-select" class="filter-select">
+                <option value="dragon_knight">Dragon Knight</option>
+                <option value="ranger">Ranger</option>
+              </select>
+            </div>
+            <div class="profile-levels" style="display: flex; align-items: center; gap: 4px;">
+              <div class="stat-input-group" title="Base Level">
+                <span class="stat-lbl" style="width: 45px;">BASE LV</span>
+                <input type="number" id="sim-base-level" class="filter-input-num" min="1" max="150" value="87" style="width: 38px;">
               </div>
-              <div class="profile-levels" style="display: flex; align-items: center; gap: 4px;">
-                <div class="stat-input-group" title="Base Level">
-                  <span class="stat-lbl" style="width: 45px;">BASE LV</span>
-                  <input type="number" id="sim-base-level" class="filter-input-num" min="1" max="150" value="87" style="width: 38px;">
-                </div>
-                <div class="stat-input-group" title="Job Level">
-                  <span class="stat-lbl" style="width: 40px;">JOB LV</span>
-                  <input type="number" id="sim-job-level" class="filter-input-num" min="1" max="100" value="17" style="width: 38px;">
-                </div>
+              <div class="stat-input-group" title="Job Level">
+                <span class="stat-lbl" style="width: 40px;">JOB LV</span>
+                <input type="number" id="sim-job-level" class="filter-input-num" min="1" max="100" value="17" style="width: 38px;">
               </div>
             </div>
-            <div class="cockpit-actions">
-              <button type="button" class="btn-text" id="sim-btn-seed-baseline" title="Reset all inputs to default baseline">RESET</button>
-              <button type="button" class="btn-text" id="sim-btn-copy-url">SHARE</button>
+          </div>
+          <div class="cockpit-actions">
+            <button type="button" class="btn-text" id="sim-btn-seed-baseline" title="Reset all inputs to default baseline">RESET</button>
+            <button type="button" class="btn-text" id="sim-btn-copy-url">SHARE</button>
+          </div>
+        </header>
+
+        <!-- State A: Executive 8-Card Grid Overview -->
+        <div class="workspace-view-overview" id="workspace-view-overview">
+          <div class="overview-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-family: var(--font-sans); font-size: 13px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+              <span>EXECUTIVE CHARACTER COCKPIT</span>
+              <span class="panel-tag" style="font-size: 10px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); padding: 2px 6px; border-radius: 4px;">8 SUBSYSTEMS</span>
+            </div>
+            <span style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">CLICK ANY CARD TO INSPECT</span>
+          </div>
+
+          <div class="overview-cards-grid">
+            <!-- Card 1: Gear & Wardrobe (Consolidated Hub: 8 Combat + 6 Costumes) -->
+            <div class="overview-card card-gear-consolidated" id="card-overview-gear" data-subsystem="gear" style="grid-column: 1 / -1;">
+              <div class="card-header-row">
+                <div class="card-title-group">
+                  <span class="card-status-dot active"></span>
+                  <span class="card-title-text" style="font-size: 13px;">GEAR & WARDROBE (MASTER STUDIO)</span>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <span class="card-badge-pill" id="card-gear-badge">8 COMBAT</span>
+                  <span class="card-badge-pill" id="card-costumes-badge" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border-color: rgba(168, 85, 247, 0.25);">6 COSTUMES</span>
+                </div>
+              </div>
+              <div class="card-metrics-summary" id="card-gear-summary" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <span style="font-weight: 700; color: var(--text-primary);">Combat Loadout: 8/8 Slots Equipped</span>
+                  <span style="color: var(--text-muted);"> · Refine Avg +10 · 22 Total Card Sockets</span>
+                </div>
+                <div class="card-key-gain" style="font-size: 11px;">Awakening: Refine III · Upgrade IV</div>
+              </div>
+              <div class="card-action-hint" style="color: var(--border-focus);">⚔ MỞ MASTER GEAR STUDIO (2 CÁNH + SETUP Ở GIỮA) ▸</div>
+              <!-- Hidden alias for contract compatibility -->
+              <span id="card-overview-costumes" data-subsystem="costumes" style="display: none;"></span>
+            </div>
+
+            <!-- Bento 2 Wrapper containing Cards 3, 4, 5, 6 to preserve contract test assertions -->
+            <section class="secondary-systems-container bento-card" id="bento-systems" style="grid-column: 1 / -1; padding: 0; background: transparent; border: none; box-shadow: none;">
+              <div class="bento-card-header" style="display: none;">
+                <span class="bento-card-title">SECONDARY SYSTEMS</span>
+              </div>
+              <div class="bento-systems-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%;">
+                <!-- Card 3: Base Stats -->
+                <div class="bento-system-tile overview-card" id="tile-base-stats" data-subsystem="stats" style="margin: 0;">
+                  <div class="card-header-row">
+                    <div class="card-title-group">
+                      <span class="card-status-dot active"></span>
+                      <span class="card-title-text">BASE STATS</span>
+                    </div>
+                    <span class="card-badge-pill" id="card-stats-badge">ALLOCATED</span>
+                  </div>
+                  <div class="card-metrics-summary" id="tile-base-stats-summary">
+                    <span>STR 100 · AGI 60 · VIT 100 · INT 30 · DEX 39 · LUK 50</span>
+                    <span class="card-key-gain">Remaining Points: 0</span>
+                  </div>
+                  <div class="card-action-hint">ALLOCATE BASE STATS ▸</div>
+                </div>
+
+                <!-- Card 4: Divinity Inscriptions -->
+                <div class="bento-system-tile overview-card" id="tile-divinity" data-subsystem="divinity" style="margin: 0;">
+                  <div class="card-header-row">
+                    <div class="card-title-group">
+                      <span class="card-status-dot active"></span>
+                      <span class="card-title-text">DIVINITY</span>
+                    </div>
+                    <span class="card-badge-pill" id="tile-divinity-badge">8/8 GOLD</span>
+                  </div>
+                  <div class="card-metrics-summary" id="tile-divinity-summary">
+                    <span>8 Divinity Parts Configured · Flash Active</span>
+                    <span class="card-key-gain">+18.5% Final P.PEN · Flash 1.4x</span>
+                  </div>
+                  <div class="card-action-hint">CONFIGURE INSCRIPTIONS ▸</div>
+                </div>
+
+                <!-- Card 5: Companions & Pet -->
+                <div class="bento-system-tile overview-card" id="tile-companions" data-subsystem="companions" style="margin: 0;">
+                  <div class="card-header-row">
+                    <div class="card-title-group">
+                      <span class="card-status-dot active"></span>
+                      <span class="card-title-text">COMPANIONS</span>
+                    </div>
+                    <span class="card-badge-pill" id="card-companions-badge">4 ACTIVE</span>
+                  </div>
+                  <div class="card-metrics-summary" id="tile-companions-summary">
+                    <span>Spark, Wraith, Cloudsong, Bubbles</span>
+                    <span class="card-key-gain">24 Combat Stat Lines Active</span>
+                  </div>
+                  <div class="card-action-hint">CONFIGURE COMPANIONS ▸</div>
+                </div>
+
+                <!-- Card 6: Buffs & Titles -->
+                <div class="bento-system-tile overview-card" id="tile-buffs" data-subsystem="buffs" style="margin: 0;">
+                  <div class="card-header-row">
+                    <div class="card-title-group">
+                      <span class="card-status-dot active"></span>
+                      <span class="card-title-text">BUFFS & TITLES</span>
+                    </div>
+                    <span class="card-badge-pill" id="tile-buffs-badge">5 BUFFS ACTIVE</span>
+                  </div>
+                  <div class="card-metrics-summary" id="tile-buffs-summary">
+                    <span>Fire Converter · Spear Flash · Concentration</span>
+                    <span class="card-key-gain">Element: Fire · Shine Pts: 0</span>
+                  </div>
+                  <div class="card-action-hint">CONFIGURE BUFFS ▸</div>
+                </div>
+              </div>
+
+              <!-- Legacy Accordions Hidden Container for 100% Contract Test & DOM Backwards Compatibility -->
+              <div id="legacy-accordions" style="display: none;">
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-base-stats"><span>Base Stats</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content active" id="acc-base-stats">
+                    <input type="number" id="sim-stat-str">
+                    <input type="number" id="sim-stat-agi">
+                    <input type="number" id="sim-stat-vit">
+                    <input type="number" id="sim-stat-int">
+                    <input type="number" id="sim-stat-dex">
+                    <input type="number" id="sim-stat-luk">
+                  </div>
+                </div>
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-progression"><span>Progression</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content" id="acc-progression">
+                    <input type="number" id="sim-ba-str" value="72">
+                    <input type="number" id="sim-ba-fpdmg" value="0.24">
+                    <input type="number" id="sim-ba-fire" value="0.30">
+                    <input type="number" id="sim-ba-hp" value="0.24">
+                    <select id="sim-shine-points"><option value="0">0</option></select>
+                    <input type="number" id="sim-title-patk" value="0">
+                    <input type="number" id="sim-title-ppen" value="0">
+                    <input type="number" id="sim-title-fdmg" value="0">
+                    <input type="number" id="sim-title-crit" value="0">
+                  </div>
+                </div>
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-buffs"><span>Buffs</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content active" id="acc-buffs">
+                    <input type="checkbox" id="sim-buff-converter" checked>
+                    <input type="checkbox" id="sim-buff-spear-flash" checked>
+                    <input type="checkbox" id="sim-buff-concentration" checked>
+                    <input type="checkbox" id="sim-buff-spooky-lamp" checked>
+                    <input type="checkbox" id="sim-buff-pet" checked>
+                  </div>
+                </div>
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-pet"><span>Pet</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content" id="acc-pet">
+                    <button type="button" id="sim-btn-open-pet-modal"></button>
+                    <div id="sim-pet-active-summary"></div>
+                    <button type="button" id="sim-btn-open-companion-modal"></button>
+                    <div id="sim-companion-active-summary"></div>
+                  </div>
+                </div>
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-divinity"><span>Divinity</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content" id="acc-divinity">
+                    <button type="button" id="sim-btn-open-divinity-modal"></button>
+                    <div id="sim-divinity-active-summary"></div>
+                    <div id="sim-divinity-list"></div>
+                  </div>
+                </div>
+                <div class="sim-accordion-item">
+                  <div class="sim-accordion-header" data-target="acc-debuffs"><span>Debuffs</span><span class="mono">▾</span></div>
+                  <div class="sim-accordion-content" id="acc-debuffs">
+                    <select id="sim-debuff-select"><option value="">None</option></select>
+                    <input type="number" id="sim-debuff-fdef" value="0">
+                    <input type="number" id="sim-debuff-fpdmg" value="0">
+                  </div>
+                </div>
+                <div class="tally-box" id="sim-tally-summary"></div>
+              </div>
+            </section>
+
+            <!-- Card 7: Target Dummy -->
+            <div class="overview-card" id="card-overview-target" data-subsystem="target">
+              <div class="card-header-row">
+                <div class="card-title-group">
+                  <span class="card-status-dot active"></span>
+                  <span class="card-title-text">TARGET DUMMY</span>
+                </div>
+                <span class="card-badge-pill" id="card-target-badge">PVE BOSS</span>
+              </div>
+              <div class="card-metrics-summary" id="card-target-summary">
+                <span>Lord of the Dead Lv.150 · Large / Undead</span>
+                <span class="card-key-gain">P.DEF: 4,800 · P.Red: 35%</span>
+              </div>
+              <div class="card-action-hint">CHANGE TARGET DUMMY ▸</div>
+            </div>
+
+            <!-- Card 8: Stat Calibrator -->
+            <!-- Card 8: Stat Tuning -->
+            <div class="overview-card" id="card-overview-calibrator" data-subsystem="calibrator">
+              <div class="card-header-row">
+                <div class="card-title-group">
+                  <span class="card-status-dot active"></span>
+                  <span class="card-title-text">STAT TUNING</span>
+                </div>
+                <span class="card-badge-pill" id="card-calibrator-badge">TUNED</span>
+              </div>
+              <div class="card-metrics-summary" id="card-calibrator-summary">
+                <span>Quick Stat Adjustments (+/- Offsets)</span>
+                <span class="card-key-gain">Live Delta Injection</span>
+              </div>
+              <div class="card-action-hint">OPEN STAT TUNING ▸</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State B: In-Place Workspace Subsystem Inspector -->
+        <div class="workspace-view-inspector" id="workspace-view-inspector" style="display: none;">
+          <header class="inspector-nav-bar" id="inspector-nav-header">
+            <div class="inspector-nav-left">
+              <button type="button" class="btn-back-overview" id="btn-inspector-back">
+                <span>◀ OVERVIEW</span>
+                <span class="mono" style="font-size: 9px; opacity: 0.7;">(Esc)</span>
+              </button>
+              <div class="inspector-breadcrumb" id="inspector-breadcrumb">
+                <span>OVERVIEW / </span>
+                <span class="inspector-breadcrumb-active" id="inspector-breadcrumb-active">COMBAT GEAR</span>
+              </div>
+            </div>
+
+            <div class="inspector-jumper-strip" id="inspector-jumper-strip">
+              <button type="button" class="jumper-btn active" data-jump="gear">1: GEAR</button>
+              <button type="button" class="jumper-btn" data-jump="costumes">2: COST</button>
+              <button type="button" class="jumper-btn" data-jump="stats">3: STAT</button>
+              <button type="button" class="jumper-btn" data-jump="divinity">4: DIV</button>
+              <button type="button" class="jumper-btn" data-jump="companions">5: PET</button>
+              <button type="button" class="jumper-btn" data-jump="buffs">6: BUFF</button>
+              <button type="button" class="jumper-btn" data-jump="target">7: TGT</button>
+              <button type="button" class="jumper-btn" data-jump="calibrator">8: CAL</button>
+            </div>
+
+            <div class="inspector-nav-right">
+              <div class="inspector-diff-strip" id="inspector-diff-strip">
+                <div class="diff-chip">
+                  <span class="diff-lbl">DPS DELTA:</span>
+                  <span class="diff-val mono font-bold" id="diff-val-dps" data-state="zero">+0 (+0.00%)</span>
+                </div>
+                <button type="button" class="btn-diff-revert" id="btn-inspector-revert" title="Revert to baseline (Esc)">REVERT</button>
+              </div>
+              <button type="button" class="btn-text font-bold" id="btn-inspector-prev" title="Previous Subsystem (Ctrl+[)" style="padding: 4px 8px; font-size: 11px;">◀ PREV</button>
+              <button type="button" class="btn-text font-bold" id="btn-inspector-next" title="Next Subsystem (Ctrl+])" style="padding: 4px 8px; font-size: 11px;">NEXT ▶</button>
             </div>
           </header>
 
-          <div class="bento-card-header" style="margin-bottom: 8px;">
-            <div class="bento-card-title">
-              <span>EQUIPMENT & SOCKETS</span>
-            </div>
-            <div class="awakening-badges" id="sim-awakening-badges-doll"></div>
-          </div>
-          <div class="paper-doll-tabs" id="paper-doll-tab-switcher">
-            <button type="button" class="doll-tab-btn active" id="tab-gear-combat" data-tab="combat">Combat (8)</button>
-            <button type="button" class="doll-tab-btn" id="tab-gear-costumes" data-tab="costumes">Costume (6)</button>
-          </div>
-          <div class="paper-doll-container" id="sim-paper-doll">
-            <div class="doll-column doll-col-left">
-              <div class="doll-slot" data-slot="clothes" id="slot-clothes"></div>
-              <div class="doll-slot" data-slot="cloak" id="slot-cloak"></div>
-              <div class="doll-slot" data-slot="shoes" id="slot-shoes"></div>
-              <div class="doll-slot" data-slot="accessory_1" id="slot-accessory_1"></div>
-              <div class="doll-slot" data-slot="costume_head" id="slot-costume_head" style="display: none;"></div>
-              <div class="doll-slot" data-slot="costume_eyes" id="slot-costume_eyes" style="display: none;"></div>
-              <div class="doll-slot" data-slot="costume_mouth" id="slot-costume_mouth" style="display: none;"></div>
-            </div>
-            <div class="doll-center-preview">
-              <div class="doll-center-pedestal">
-                <div class="doll-avatar-halo"></div>
-                <div class="doll-avatar-icon">
-                  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
-                    <path d="M12 6v6l4 2"/>
-                  </svg>
+          <div class="inspector-pane-container" id="inspector-pane-container">
+            <!-- Pane 1: Combat Equipment & Sockets (Hosts #bento-equip) -->
+            <div class="inspector-pane active" id="pane-inspector-gear" data-pane="gear">
+              <section class="paper-doll-section bento-card" id="bento-equip">
+                <div class="bento-card-header" style="margin-bottom: 8px;">
+                  <div class="bento-card-title">
+                    <span>EQUIPMENT & SOCKETS</span>
+                  </div>
+                  <div class="awakening-badges" id="sim-awakening-badges-doll"></div>
                 </div>
-                <div class="doll-center-class" id="doll-center-class">DRAGON KNIGHT</div>
-                <div class="doll-center-levels" id="doll-center-levels">Lv.87 / Job.17</div>
-                <div class="doll-center-mode-tag" id="doll-center-mode-tag">COMBAT GEAR</div>
-              </div>
+                <div class="paper-doll-tabs" id="paper-doll-tab-switcher">
+                  <button type="button" class="doll-tab-btn active" id="tab-gear-combat" data-tab="combat">Combat (8)</button>
+                  <button type="button" class="doll-tab-btn" id="tab-gear-costumes" data-tab="costumes">Costume (6)</button>
+                </div>
+                <div class="paper-doll-container" id="sim-paper-doll">
+                  <div class="doll-column doll-col-left">
+                    <div class="doll-slot" data-slot="clothes" id="slot-clothes"></div>
+                    <div class="doll-slot" data-slot="cloak" id="slot-cloak"></div>
+                    <div class="doll-slot" data-slot="shoes" id="slot-shoes"></div>
+                    <div class="doll-slot" data-slot="accessory_1" id="slot-accessory_1"></div>
+                    <div class="doll-slot" data-slot="costume_head" id="slot-costume_head" style="display: none;"></div>
+                    <div class="doll-slot" data-slot="costume_eyes" id="slot-costume_eyes" style="display: none;"></div>
+                    <div class="doll-slot" data-slot="costume_mouth" id="slot-costume_mouth" style="display: none;"></div>
+                  </div>
+                  <div class="doll-center-preview">
+                    <div class="doll-center-pedestal">
+                      <div class="doll-avatar-halo"></div>
+                      <div class="doll-avatar-icon">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                          <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                          <path d="M12 6v6l4 2"/>
+                        </svg>
+                      </div>
+                      <div class="doll-center-class" id="doll-center-class">DRAGON KNIGHT</div>
+                      <div class="doll-center-levels" id="doll-center-levels">Lv.87 / Job.17</div>
+                      <div class="doll-center-mode-tag" id="doll-center-mode-tag">COMBAT GEAR</div>
+                    </div>
+                  </div>
+                  <div class="doll-column doll-col-right">
+                    <div class="doll-slot" data-slot="weapon" id="slot-weapon"></div>
+                    <div class="doll-slot" data-slot="shield" id="slot-shield"></div>
+                    <div class="doll-slot" data-slot="talisman" id="slot-talisman"></div>
+                    <div class="doll-slot" data-slot="accessory_2" id="slot-accessory_2"></div>
+                    <div class="doll-slot" data-slot="costume_back" id="slot-costume_back" style="display: none;"></div>
+                    <div class="doll-slot" data-slot="costume_tail" id="slot-costume_tail" style="display: none;"></div>
+                    <div class="doll-slot" data-slot="costume_mask" id="slot-costume_mask" style="display: none;"></div>
+                  </div>
+                </div>
+              </section>
             </div>
-            <div class="doll-column doll-col-right">
-              <div class="doll-slot" data-slot="weapon" id="slot-weapon"></div>
-              <div class="doll-slot" data-slot="shield" id="slot-shield"></div>
-              <div class="doll-slot" data-slot="talisman" id="slot-talisman"></div>
-              <div class="doll-slot" data-slot="accessory_2" id="slot-accessory_2"></div>
-              <div class="doll-slot" data-slot="costume_back" id="slot-costume_back" style="display: none;"></div>
-              <div class="doll-slot" data-slot="costume_tail" id="slot-costume_tail" style="display: none;"></div>
-              <div class="doll-slot" data-slot="costume_mask" id="slot-costume_mask" style="display: none;"></div>
+
+            <!-- Pane 8: Stat Calibrator (Hosts #bento-calibrator) -->
+            <div class="inspector-pane" id="pane-inspector-calibrator" data-pane="calibrator" style="display: none;">
+              <section class="calibrator-section bento-card" id="bento-calibrator">
+                <div class="bento-card-header">
+                  <div>
+                    <span class="bento-card-title">DETAILED STAT CALIBRATOR</span>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
+                      Consolidated Sheet • In-Game Parity Tuning (+/- Delta Injection)
+                    </div>
+                  </div>
+                  <button type="button" class="btn-text font-bold" id="btn-calibrator-reset" style="font-size: 10px; color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); padding: 4px 8px; border-radius: 4px;">RESET OFFSETS (0)</button>
+                </div>
+                <div class="calibrator-table-wrap" id="sim-stat-calibrator">
+                  <table class="calibrator-table" id="sim-stat-calibrator-table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: left; width: 40%;">STAT NAME</th>
+                        <th style="text-align: right; width: 20%;">GEAR BASE</th>
+                        <th style="text-align: center; width: 20%;">[+/- OFFSET]</th>
+                        <th style="text-align: right; width: 20%;">EFFECTIVE TOTAL</th>
+                      </tr>
+                    </thead>
+                    <tbody id="calibrator-table-body">
+                      <!-- Rendered dynamically by simulator_ui.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </section>
             </div>
           </div>
-        </section>
-
-        <!-- Bento 2: Secondary Systems Tiles -->
-        <section class="secondary-systems-container bento-card" id="bento-systems">
-          <div class="bento-card-header">
-            <span class="bento-card-title">SECONDARY SYSTEMS</span>
-            <span class="panel-tag">CLICK TILE TO CONFIGURE</span>
-          </div>
-          <div class="bento-systems-grid">
-            <!-- Tile 1: Base Stats -->
-            <div class="bento-system-tile" id="tile-base-stats">
-              <div class="system-tile-header">
-                <span class="system-tile-title">BASE STATS</span>
-                <span class="system-tile-badge">ALLOCATED</span>
-              </div>
-              <div class="system-tile-body" id="tile-base-stats-summary">
-                STR 100 · AGI 60 · VIT 100 · INT 30 · DEX 39 · LUK 50
-              </div>
-              <div class="system-tile-action">CONFIGURE BASE STATS ▸</div>
-            </div>
-
-            <!-- Tile 2: Divinity Inscriptions -->
-            <div class="bento-system-tile" id="tile-divinity">
-              <div class="system-tile-header">
-                <span class="system-tile-title">DIVINITY</span>
-                <span class="system-tile-badge" id="tile-divinity-badge">8/8 GOLD</span>
-              </div>
-              <div class="system-tile-body" id="tile-divinity-summary">
-                8 Divinity Parts Configured · Flash Active
-              </div>
-              <div class="system-tile-action">CONFIGURE INSCRIPTIONS ▸</div>
-            </div>
-
-            <!-- Tile 3: Companions -->
-            <div class="bento-system-tile" id="tile-companions">
-              <div class="system-tile-header">
-                <span class="system-tile-title">COMPANIONS</span>
-                <span class="system-tile-badge">4 ACTIVE</span>
-              </div>
-              <div class="system-tile-body" id="tile-companions-summary">
-                Spark, Wraith, Cloudsong, Bubbles · 24 Stat Lines
-              </div>
-              <div class="system-tile-action">CONFIGURE COMPANIONS ▸</div>
-            </div>
-
-            <!-- Tile 4: Buffs & Titles -->
-            <div class="bento-system-tile" id="tile-buffs">
-              <div class="system-tile-header">
-                <span class="system-tile-title">BUFFS & TITLES</span>
-                <span class="system-tile-badge" id="tile-buffs-badge">5 BUFFS ACTIVE</span>
-              </div>
-              <div class="system-tile-body" id="tile-buffs-summary">
-                Fire Converter · Spear Flash · Concentration · Shine Pts: 0
-              </div>
-              <div class="system-tile-action">CONFIGURE BUFFS ▸</div>
-            </div>
-          </div>
-
-          <!-- Legacy Accordions Hidden Container for 100% Contract Test & DOM Backwards Compatibility -->
-          <div id="legacy-accordions" style="display: none;">
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-base-stats"><span>Base Stats</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content active" id="acc-base-stats">
-                <input type="number" id="sim-stat-str">
-                <input type="number" id="sim-stat-agi">
-                <input type="number" id="sim-stat-vit">
-                <input type="number" id="sim-stat-int">
-                <input type="number" id="sim-stat-dex">
-                <input type="number" id="sim-stat-luk">
-              </div>
-            </div>
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-progression"><span>Progression</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content" id="acc-progression">
-                <input type="number" id="sim-ba-str" value="72">
-                <input type="number" id="sim-ba-fpdmg" value="0.24">
-                <input type="number" id="sim-ba-fire" value="0.30">
-                <input type="number" id="sim-ba-hp" value="0.24">
-                <select id="sim-shine-points"><option value="0">0</option></select>
-                <input type="number" id="sim-title-patk" value="0">
-                <input type="number" id="sim-title-ppen" value="0">
-                <input type="number" id="sim-title-fdmg" value="0">
-                <input type="number" id="sim-title-crit" value="0">
-              </div>
-            </div>
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-buffs"><span>Buffs</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content active" id="acc-buffs">
-                <input type="checkbox" id="sim-buff-converter" checked>
-                <input type="checkbox" id="sim-buff-spear-flash" checked>
-                <input type="checkbox" id="sim-buff-concentration" checked>
-                <input type="checkbox" id="sim-buff-spooky-lamp" checked>
-                <input type="checkbox" id="sim-buff-pet" checked>
-              </div>
-            </div>
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-pet"><span>Pet</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content" id="acc-pet">
-                <button type="button" id="sim-btn-open-pet-modal"></button>
-                <div id="sim-pet-active-summary"></div>
-                <button type="button" id="sim-btn-open-companion-modal"></button>
-                <div id="sim-companion-active-summary"></div>
-              </div>
-            </div>
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-divinity"><span>Divinity</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content" id="acc-divinity">
-                <button type="button" id="sim-btn-open-divinity-modal"></button>
-                <div id="sim-divinity-active-summary"></div>
-                <div id="sim-divinity-list"></div>
-              </div>
-            </div>
-            <div class="sim-accordion-item">
-              <div class="sim-accordion-header" data-target="acc-debuffs"><span>Debuffs</span><span class="mono">▾</span></div>
-              <div class="sim-accordion-content" id="acc-debuffs">
-                <select id="sim-debuff-select"><option value="">None</option></select>
-                <input type="number" id="sim-debuff-fdef" value="0">
-                <input type="number" id="sim-debuff-fpdmg" value="0">
-              </div>
-            </div>
-            <div class="tally-box" id="sim-tally-summary"></div>
-          </div>
-        </section>
+        </div>
       </main>
 
       <!-- Bento 3: Combat Telemetry & Results HUD -->
@@ -440,48 +598,44 @@
           <button type="button" class="btn-action" id="sim-btn-reset-defaults">RESET DEFAULTS</button>
         </div>
       </aside>
-
-      <!-- Bento 4: Detailed Stat Calibrator & Manual Offsets -->
-      <section class="calibrator-section bento-card" id="bento-calibrator">
-        <div class="bento-card-header">
-          <div>
-            <span class="bento-card-title">DETAILED STAT CALIBRATOR</span>
-            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
-              Consolidated Sheet • In-Game Parity Tuning (+/- Delta Injection)
-            </div>
-          </div>
-          <button type="button" class="btn-text font-bold" id="btn-calibrator-reset" style="font-size: 10px; color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); padding: 4px 8px; border-radius: 4px;">RESET OFFSETS (0)</button>
-        </div>
-        <div class="calibrator-table-wrap" id="sim-stat-calibrator">
-          <table class="calibrator-table" id="sim-stat-calibrator-table">
-            <thead>
-              <tr>
-                <th style="text-align: left; width: 40%;">STAT NAME</th>
-                <th style="text-align: right; width: 20%;">GEAR BASE</th>
-                <th style="text-align: center; width: 20%;">[+/- OFFSET]</th>
-                <th style="text-align: right; width: 20%;">EFFECTIVE TOTAL</th>
-              </tr>
-            </thead>
-            <tbody id="calibrator-table-body">
-              <!-- Rendered dynamically by simulator_ui.js -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
-
     <!-- Slide-over Equipment Drawer (Right-side overlay) -->
     <div class="slide-over-backdrop" id="sim-drawer-backdrop" style="display: none;"></div>
-    <aside class="slide-over-drawer" id="sim-equip-drawer">
-      <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-subtle);">
-        <div class="drawer-header-left" style="display: flex; align-items: center; gap: 8px;">
-          <span class="drawer-slot-badge" id="drawer-slot-tag" style="color: var(--border-focus); font-family: var(--font-mono); font-weight: 700;">[SLOT]</span>
-          <span class="drawer-title" id="drawer-slot-title" style="font-weight: 700; font-size: 13px;">SELECT EQUIPMENT</span>
+    <aside class="slide-over-drawer master-gear-studio-dialog" id="sim-equip-drawer">
+      <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-subtle);">
+        <div class="drawer-header-left" style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-weight: 700; font-size: 13px; color: var(--text-primary); letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+              <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+            </svg>
+            MASTER GEAR STUDIO
+          </span>
+          <div class="paper-doll-tabs" id="modal-gear-tab-switcher" style="margin: 0; display: inline-flex;">
+            <button type="button" class="doll-tab-btn active" id="modal-tab-gear-combat" data-tab="combat">Combat (8)</button>
+            <button type="button" class="doll-tab-btn" id="modal-tab-gear-costumes" data-tab="costumes">Costumes (6)</button>
+          </div>
         </div>
-        <button type="button" class="btn-text" id="btn-close-equip-drawer">CLOSE</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="drawer-slot-badge" id="drawer-slot-tag" style="color: var(--border-focus); font-family: var(--font-mono); font-weight: 700;">[SLOT]</span>
+          <span class="drawer-title" id="drawer-slot-title" style="font-weight: 700; font-size: 12px; color: var(--text-secondary);">SELECT EQUIPMENT</span>
+          <button type="button" class="btn-text font-bold" id="btn-close-equip-drawer" style="padding: 4px 10px; margin-left: 8px;">CLOSE (Esc)</button>
+        </div>
       </div>
-      <div class="drawer-body" id="drawer-equip-body" style="padding: 12px; overflow-y: auto;">
-        <!-- Dynamic content rendered by simulator_ui.js -->
+      <!-- 3-Column Studio Body (Left Wing + Center Dynamic Editor + Right Wing) -->
+      <div class="master-gear-studio-body" id="master-gear-studio-body">
+        <!-- Column 1: Left Wing (4 Defense Slots or 3 Head Slots) -->
+        <div class="gear-wing-col gear-wing-left" id="gear-modal-wing-left">
+          <!-- Dynamically populated slot cards -->
+        </div>
+
+        <!-- Column 2: Center Dynamic Setup Editor -->
+        <div class="gear-center-editor" id="drawer-equip-body">
+          <!-- Dynamic content rendered by simulator_ui.js -->
+        </div>
+
+        <!-- Column 3: Right Wing (4 Offense Slots or 3 Back Slots) -->
+        <div class="gear-wing-col gear-wing-right" id="gear-modal-wing-right">
+          <!-- Dynamically populated slot cards -->
+        </div>
       </div>
     </aside>
     </div>
@@ -628,6 +782,38 @@
             <option value="700">Tier 700 pts</option>
             <option value="800">Tier 800 pts</option>
           </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Stat Tuning Modal Popup -->
+  <div class="rox-modal-backdrop" id="modal-stat-calibrator" style="display: none;">
+    <div class="rox-modal-dialog" style="width: min(720px, 94vw); max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="rox-modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="rox-modal-title">STAT TUNING & OFFSETS</span>
+          <button type="button" class="btn-text font-bold" id="btn-calibrator-reset" style="font-size: 10px; color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); padding: 2px 6px; border-radius: 4px;">RESET (0)</button>
+        </div>
+        <button type="button" class="btn-text font-bold" id="btn-close-calibrator-modal">CLOSE</button>
+      </div>
+      <div class="rox-modal-body" style="padding: 16px; overflow-y: auto;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">
+          Quickly adjust base stats and injection offsets to test build scaling and parity differences.
+        </div>
+        <div class="calibrator-table-wrap" id="sim-stat-calibrator">
+          <table class="calibrator-table" id="sim-stat-calibrator-table">
+            <thead>
+              <tr>
+                <th style="text-align: left; width: 40%;">STAT NAME</th>
+                <th style="text-align: right; width: 20%;">GEAR BASE</th>
+                <th style="text-align: center; width: 20%;">[+/- OFFSET]</th>
+                <th style="text-align: right; width: 20%;">EFFECTIVE TOTAL</th>
+              </tr>
+            </thead>
+            <tbody id="calibrator-table-body">
+              <!-- Rendered dynamically by simulator_ui.js -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

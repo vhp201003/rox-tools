@@ -191,4 +191,13 @@ def test_monster_drawer_test_dps_bridge_cta():
     assert 'Test DPS on this Monster' in content, "Missing in-game English CTA text"
 
 
+def test_overview_cards_and_drawer_popup_contract():
+    content = INDEX_HTML_PATH.read_text(encoding="utf-8")
+    assert 'id="card-overview-gear"' in content, "Missing #card-overview-gear in index.html"
+    assert 'id="card-overview-costumes"' in content, "Missing #card-overview-costumes in index.html"
+    assert 'data-subsystem="gear"' in content, "Missing data-subsystem=gear in index.html"
+    assert 'data-subsystem="costumes"' in content, "Missing data-subsystem=costumes in index.html"
+    assert 'id="sim-equip-drawer"' in content, "Missing #sim-equip-drawer in index.html"
+    assert 'id="sim-drawer-backdrop"' in content, "Missing #sim-drawer-backdrop in index.html"
+
 
