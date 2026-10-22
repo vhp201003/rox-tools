@@ -288,7 +288,7 @@ def populate_from_static_data(conn: sqlite3.Connection):
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (c["class_id"], c["class_name"], c["primary_stat"], c["attack_type"], c["hp_per_vit"], c["sp_per_int"], json.dumps(c["growth"])))
 
-    # 9. Passive Milestones: Battle Achievement & Wardrobe
+    # 9. Passive Milestones: Battle Achievement, Wardrobe, Guild Blessing, Card Awakening
     cur.execute("""
     INSERT OR REPLACE INTO sim_passive_milestones (system_type, identifier, level_or_point, stats_json)
     VALUES (?, ?, ?, ?)
@@ -296,37 +296,52 @@ def populate_from_static_data(conn: sqlite3.Connection):
         "STR": 72, "VIT": 72, "Final P.DMG Bonus": 0.24, "Fire Enhance": 0.3, "Max HP%": 0.24, "Final P.DMG RED": 0.16
     })))
 
-    # Wardrobe Shine points standard steps
-    wardrobe_milestones = [
-        (20, {"P.DEF": 20, "M.DEF": 10}),
-        (40, {"Max HP": 400, "Max SP": 100}),
-        (60, {"P.ATK": 30, "M.ATK": 30}),
-        (80, {"Hit": 20, "Flee": 20}),
-        (100, {"Crit": 15, "Anti-Crit": 15}),
-        (200, {"Crit": 30, "Anti-Crit": 30}),
-        (500, {"P.DEF": 100, "M.DEF": 50})
-    ]
-    for pts, s_dict in wardrobe_milestones:
+    # Wardrobe Shine Point milestones
+    wardrobe_milestones = data.get("wardrobe_milestones") or []
+    for wm in wardrobe_milestones:
+        pts = wm.get("level_or_point") or wm.get("point") or 0
+        ident = wm.get("identifier") or f"{pts}_points"
+        stats = wm.get("stats") or {}
         cur.execute("""
         INSERT OR REPLACE INTO sim_passive_milestones (system_type, identifier, level_or_point, stats_json)
         VALUES (?, ?, ?, ?)
-        """, ("wardrobe_shine", f"{pts}_points", pts, json.dumps(s_dict)))
+        """, ("wardrobe_shine", ident, pts, json.dumps(stats)))
 
-    # 10. Inscriptions standard set
-    inscriptions = [
-        ("Inscription", "Strength I", 10, {"STR": 5}),
-        ("Inscription", "Physical Damage Bonus I", 10, {"P.DMG Bonus": 20}),
-        ("Inscription", "Physical Damage Reduction IV", 10, {"PVP Final P.DMG RED": 0.05}),
-        ("Pioneer", "Physical Attack I", 10, {"P.ATK": 15}),
-        ("Pioneer", "Physical Damage Bonus III", 10, {"Final P.DMG Bonus": 0.05}),
-        ("Pioneer", "Physical Lifesteal", 10, {"Physical Lifesteal": 0.02}),
-    ]
-    for cat, name, max_lv, s_dict in inscriptions:
+    # Guild Blessing (16 stats)
+    guild_blessings = data.get("guild_blessings_catalog") or []
+    for gb in guild_blessings:
+        sn = gb.get("stat_name")
+        if not sn:
+            continue
+        cur.execute("""
+        INSERT OR REPLACE INTO sim_passive_milestones (system_type, identifier, level_or_point, stats_json)
+        VALUES (?, ?, ?, ?)
+        """, ("guild_blessing", sn, 0, json.dumps(gb)))
+
+    # Card Awakening (22 stats)
+    card_awakenings = data.get("card_awakenings_catalog") or []
+    for ca in card_awakenings:
+        sn = ca.get("stat_name")
+        if not sn:
+            continue
+        max_lv = ca.get("max_level", 100)
+        cur.execute("""
+        INSERT OR REPLACE INTO sim_passive_milestones (system_type, identifier, level_or_point, stats_json)
+        VALUES (?, ?, ?, ?)
+        """, ("card_awakening", sn, max_lv, json.dumps(ca)))
+
+    # 10. Inscriptions (all 34 rows from Input3)
+    inscriptions = data.get("inscriptions_catalog") or []
+    for inc in inscriptions:
+        cat = inc.get("category", "Inscription")
+        name = inc.get("name")
+        if not name:
+            continue
+        max_lv = inc.get("max_level", 10)
         cur.execute("""
         INSERT OR REPLACE INTO sim_inscriptions (category, name, max_level, stats_per_level_json)
         VALUES (?, ?, ?, ?)
-        """, (cat, name, max_lv, json.dumps(s_dict)))
-
+        """, (cat, name, max_lv, json.dumps(inc)))
     # 11. Skills & Buffs standard
     skills_buffs = [
         ("sword_mastery", "dragon_knight", "Sword Mastery", "passive", 10, 0.0, 1.0, "stat_bonus", json.dumps({"P.ATK": 10})),
@@ -345,6 +360,31 @@ def populate_from_static_data(conn: sqlite3.Connection):
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (s_id, c_id, name, cat, max_lv, cd, hps, f_type, eff))
 
+
+    # 12. Combat Rules: equip_sets and card_sets
+    equip_sets = data.get("equip_sets") or []
+    for es in equip_sets:
+        s_name = es.get("name")
+        if not s_name:
+            continue
+        thresh = float(es.get("threshold") or 3.0)
+        extra = json.dumps(es)
+        cur.execute("""
+        INSERT OR REPLACE INTO sim_combat_rules (rule_type, key_1, key_2, value, extra_json)
+        VALUES (?, ?, ?, ?, ?)
+        """, ("equip_set", s_name, "threshold", thresh, extra))
+
+    card_sets = data.get("card_sets") or []
+    for cs in card_sets:
+        c_name = cs.get("name")
+        if not c_name:
+            continue
+        req_cnt = float(cs.get("req_count") or 1.0)
+        extra = json.dumps(cs)
+        cur.execute("""
+        INSERT OR REPLACE INTO sim_combat_rules (rule_type, key_1, key_2, value, extra_json)
+        VALUES (?, ?, ?, ?, ?)
+        """, ("card_set", c_name, "req_count", req_cnt, extra))
     conn.commit()
     print("Static dataset migration completed successfully.")
 

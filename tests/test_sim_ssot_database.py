@@ -50,3 +50,56 @@ def test_ssot_combat_rules_element_matrix():
     assert fire_vs_water is not None
     assert fire_vs_water["value"] == 1.5
 
+
+def test_ssot_inscriptions():
+    all_inc = db.get_sim_inscriptions()
+    assert len(all_inc) == 34
+
+    inscriptions = db.get_sim_inscriptions("Inscription")
+    assert len(inscriptions) == 17
+    assert any(i["name"] == "Strength I" for i in inscriptions)
+
+    pioneers = db.get_sim_inscriptions("Pioneer")
+    assert len(pioneers) == 17
+    assert any(p["name"] == "Physical Attack I" for p in pioneers)
+
+    first = inscriptions[0]
+    assert "stats_per_level" in first
+    assert "stat1" in first["stats_per_level"]
+
+
+def test_ssot_passive_milestones_and_wardrobe():
+    guild_blessings = db.get_sim_passive_milestones("guild_blessing")
+    assert len(guild_blessings) == 16
+    assert any(gb["identifier"] == "P.ATK" for gb in guild_blessings)
+
+    card_awakenings = db.get_sim_passive_milestones("card_awakening")
+    assert len(card_awakenings) == 22
+    assert any(ca["identifier"] == "STR" for ca in card_awakenings)
+
+    all_wardrobe = db.get_sim_wardrobe_milestones()
+    assert len(all_wardrobe) == 25
+
+    wardrobe_100 = db.get_sim_wardrobe_milestones(max_points=100)
+    assert len(wardrobe_100) == 5
+    assert [m["level_or_point"] for m in wardrobe_100] == [20, 40, 60, 80, 100]
+
+
+def test_ssot_equip_sets_and_card_sets():
+    equip_sets = db.get_sim_equip_sets()
+    assert len(equip_sets) >= 37
+    assert any(es["key_1"] == "Hurricane - Stack" for es in equip_sets)
+    assert any("Ferocity" in es["key_1"] for es in equip_sets)
+
+    first_set = next(es for es in equip_sets if es["key_1"] == "Hurricane - Stack")
+    assert "extra" in first_set
+    assert first_set["extra"]["stat"] == "PVP Final P.DMG Bonus"
+
+    card_sets = db.get_sim_card_sets()
+    assert len(card_sets) == 4
+    card_set_names = [cs["key_1"] for cs in card_sets]
+    assert any("Drake" in n for n in card_set_names)
+    assert any("Arc Angeling" in n for n in card_set_names)
+    assert any("Thanatos" in n for n in card_set_names)
+    assert any("Skeggiold" in n for n in card_set_names)
+

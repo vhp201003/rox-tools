@@ -1,7 +1,45 @@
 import json
 from pathlib import Path
 import openpyxl
+import re
 
+def parse_stat_formula(f):
+    if not f:
+        return 0.0, 3
+    s = str(f).strip()
+    thresh = 3
+    m_rd = re.search(r'ROUNDDOWN\(.*?/(\d+)', s)
+    if m_rd:
+        thresh = int(m_rd.group(1))
+    else:
+        m_lt = re.search(r'<(\d+)', s)
+        if m_lt:
+            thresh = int(m_lt.group(1))
+        else:
+            m_ge = re.search(r'>=(\d+)', s)
+            if m_ge:
+                thresh = int(m_ge.group(1))
+            else:
+                m_gt = re.search(r'>(\d+)', s)
+                if m_gt:
+                    thresh = int(m_gt.group(1)) + 1
+    rate = 0.0
+    m_pct = re.search(r'([+-]?\d+(?:\.\d+)?)%', s)
+    if m_pct:
+        rate = float(m_pct.group(1)) / 100.0
+    else:
+        m_num = re.search(r'=([+-]?\d+(?:\.\d+)?)\*', s)
+        if m_num:
+            rate = float(m_num.group(1))
+        else:
+            m_if_val = re.search(r',0,([+-]?\d+(?:\.\d+)?)\)', s)
+            if m_if_val:
+                rate = float(m_if_val.group(1))
+            else:
+                m_raw = re.search(r'=([+-]?\d+(?:\.\d+)?)', s)
+                if m_raw:
+                    rate = float(m_raw.group(1))
+    return rate, thresh
 EXCEL_PATH = Path("assets/templates/arang-simulator-master.xlsx")
 OUT_DATA_PATH = Path("src/rox_wiki/static/data/static_game_data.json")
 OUT_DK_PATH = Path("src/rox_wiki/static/data/dragon_knight_manifest.json")
@@ -31,12 +69,14 @@ def compile_all():
 
     # 3. Shadow Equipment Hotfix stats
     shadow_hotfix = {}
-    for r in range(5, 22):
-        lvl = ws_ml.cell(r, 44).value
-        bonus = ws_ml.cell(r, 46).value
+    for r in range(4, 23):
+        lvl = ws_ml.cell(r, 45).value
+        bonus = ws_ml.cell(r, 47).value
         if lvl is not None and bonus is not None:
-            shadow_hotfix[int(lvl)] = float(bonus)
-
+            try:
+                shadow_hotfix[int(lvl)] = float(bonus)
+            except (ValueError, TypeError):
+                pass
     # 4. Awakening Tiers
     awakening_tiers = {
         "refine": [
@@ -230,24 +270,199 @@ def compile_all():
         if name:
             mvp_debuffs.append({"level": int(lvl) if lvl else 0, "name": str(name).strip(), "debuff_res": float(res) if res else 0.0})
 
-    # 7e. EquipSet bonuses
+    # 7e. EquipSet bonuses (all 37 equip sets / 82+ variants across rows 3-156)
     ws_es = wb["EquipSet"]
+    ws_es_f = wb_formulas["EquipSet"]
     equip_sets = []
-    for r in range(3, 30):
-        name = ws_es.cell(r, 1).value
-        if name:
-            stat_name = ws_es.cell(r, 19).value
-            equip_sets.append({
-                "name": str(name).strip(),
-                "stat": str(stat_name).strip() if stat_name else "",
-                "weapon": str(ws_es.cell(r, 2).value or "").strip(),
-                "armor": str(ws_es.cell(r, 3).value or "").strip(),
-                "cloak": str(ws_es.cell(r, 4).value or "").strip(),
-                "shoes": str(ws_es.cell(r, 5).value or "").strip(),
-                "acc1": str(ws_es.cell(r, 6).value or "").strip(),
-                "acc2": str(ws_es.cell(r, 7).value or "").strip(),
-                "talisman": str(ws_es.cell(r, 12).value or "").strip()
+    for r in range(3, 157):
+        name_val = ws_es.cell(r, 1).value
+        name_f = ws_es_f.cell(r, 1).value
+        if not name_val and not name_f:
+            continue
+        name = str(name_val or name_f).strip()
+        if name.startswith('="Tough Resilience'):
+            name = "Tough Resilience Lv.1 - Sharp Stack"
+        elif name.startswith('=IF(Input1!$B$2="Minstrel","Apricity Heart - Stack"'):
+            name = "Soulmare Chains - Stack"
+        elif name.startswith('=IF(Input1!$B$2="Minstrel","Apricity Heart I - Stack"'):
+            name = "Soulmare Chains I - Stack"
+        elif name.startswith('='):
+            continue
+
+        stat_name = ws_es.cell(r, 19).value
+        stat_bonuses = []
+        stats_dict = {}
+        thresholds_dict = {}
+        formulas_dict = {}
+        min_threshold = 3
+
+        for col_n, col_v in [(19, 20), (21, 22), (23, 24), (25, 26)]:
+            sn = ws_es.cell(r, col_n).value
+            sv = ws_es.cell(r, col_v).value
+            sv_f = ws_es_f.cell(r, col_v).value
+            if sn:
+                sn_str = str(sn).strip()
+                rate, thresh = parse_stat_formula(sv_f)
+                stat_bonuses.append({
+                    "stat": sn_str,
+                    "value": rate,
+                    "threshold": thresh,
+                    "formula": str(sv_f or "")
+                })
+                stats_dict[sn_str] = rate
+                thresholds_dict[sn_str] = thresh
+                formulas_dict[sn_str] = str(sv_f or "")
+                min_threshold = thresh
+
+        acc_pieces = [str(ws_es.cell(r, c).value).strip() for c in range(6, 12) if ws_es.cell(r, c).value]
+        tal_pieces = [str(ws_es.cell(r, c).value).strip() for c in range(12, 18) if ws_es.cell(r, c).value]
+
+        set_entry = {
+            "name": name,
+            "stat": str(stat_name).strip() if stat_name else (stat_bonuses[0]["stat"] if stat_bonuses else ""),
+            "threshold": min_threshold,
+            "weapon": str(ws_es.cell(r, 2).value or "").strip(),
+            "armor": str(ws_es.cell(r, 3).value or "").strip(),
+            "cloak": str(ws_es.cell(r, 4).value or "").strip(),
+            "shoes": str(ws_es.cell(r, 5).value or "").strip(),
+            "acc1": str(ws_es.cell(r, 6).value or "").strip(),
+            "acc2": str(ws_es.cell(r, 7).value or "").strip(),
+            "acc3": str(ws_es.cell(r, 8).value or "").strip(),
+            "acc4": str(ws_es.cell(r, 9).value or "").strip(),
+            "acc5": str(ws_es.cell(r, 10).value or "").strip(),
+            "acc6": str(ws_es.cell(r, 11).value or "").strip(),
+            "talisman1": str(ws_es.cell(r, 12).value or "").strip(),
+            "talisman2": str(ws_es.cell(r, 13).value or "").strip(),
+            "talisman3": str(ws_es.cell(r, 14).value or "").strip(),
+            "talisman4": str(ws_es.cell(r, 15).value or "").strip(),
+            "talisman5": str(ws_es.cell(r, 16).value or "").strip(),
+            "talisman6": str(ws_es.cell(r, 17).value or "").strip(),
+            "talisman": str(ws_es.cell(r, 12).value or "").strip(),
+            "accessories": acc_pieces,
+            "talismans": tal_pieces,
+            "stat_bonuses": stat_bonuses,
+            "stats": stats_dict,
+            "thresholds": thresholds_dict,
+            "formulas": formulas_dict
+        }
+        equip_sets.append(set_entry)
+
+    # 7f. CardSet combo rules (rows 38-45)
+    ws_cs = wb["CardSet"]
+    ws_cs_f = wb_formulas["CardSet"]
+    card_sets = []
+    for r in range(39, 46):
+        cards = [str(ws_cs.cell(r, c).value).strip() for c in range(2, 12) if ws_cs.cell(r, c).value]
+        if not cards:
+            continue
+        status_f = str(ws_cs_f.cell(r, 12).value or "")
+        m_cnt = re.search(r'>=(\d+)', status_f)
+        req_count = int(m_cnt.group(1)) if m_cnt else 1
+
+        stat_rules = {}
+        for c_stat in range(13, 23, 2):
+            sn = ws_cs.cell(r, c_stat).value
+            sv = ws_cs_f.cell(r, c_stat + 1).value or ws_cs.cell(r, c_stat + 1).value
+            if sn:
+                stat_rules[str(sn).strip()] = str(sv).strip() if sv else ""
+
+        base_name = cards[0].split('[')[0].strip()
+        card_sets.append({
+            "name": f"{base_name} Combo",
+            "base_card": base_name,
+            "required_cards": cards,
+            "req_count": req_count,
+            "condition_formula": status_f,
+            "stat_formulas": stat_rules
+        })
+
+    # 7g. Inscriptions catalog (Input3 B4:H37)
+    ws_in3 = wb["Input3"]
+    ws_in3_f = wb_formulas["Input3"]
+    inscriptions_catalog = []
+    current_cat = "Inscription"
+    for r in range(4, 38):
+        cat_val = ws_in3.cell(r, 2).value
+        if cat_val and str(cat_val).strip() in ["Inscription", "Pioneer"]:
+            current_cat = str(cat_val).strip()
+
+        name_val = ws_in3.cell(r, 3).value
+        name_f = ws_in3_f.cell(r, 3).value
+        name = str(name_val or name_f or "").strip()
+
+        stat1_name = str(ws_in3.cell(r, 5).value or ws_in3_f.cell(r, 5).value or "").strip()
+        stat1_formula = str(ws_in3_f.cell(r, 6).value or ws_in3.cell(r, 6).value or "").strip()
+
+        stat2_name = str(ws_in3.cell(r, 7).value or ws_in3_f.cell(r, 7).value or "").strip()
+        stat2_formula = str(ws_in3_f.cell(r, 8).value or ws_in3.cell(r, 8).value or "").strip()
+
+        if "IFERROR" in stat2_name:
+            stat2_name = ""
+        if "IFERROR" in stat2_formula:
+            stat2_formula = ""
+
+        inscriptions_catalog.append({
+            "category": current_cat,
+            "name": name,
+            "max_level": 10,
+            "stat1": stat1_name,
+            "formula1": stat1_formula,
+            "stat2": stat2_name,
+            "formula2": stat2_formula
+        })
+
+    # 7h. Guild Blessing catalog (Input1 Q3:R18)
+    ws_in1 = wb["Input1"]
+    ws_in1_f = wb_formulas["Input1"]
+    guild_blessings_catalog = []
+    for r in range(3, 19):
+        sn = ws_in1.cell(r, 17).value
+        formula = ws_in1_f.cell(r, 18).value
+        val = ws_in1.cell(r, 18).value
+        if sn:
+            guild_blessings_catalog.append({
+                "stat_name": str(sn).strip(),
+                "formula": str(formula).strip() if formula is not None else "",
+                "default_value": float(val) if isinstance(val, (int, float)) else 0.0
             })
+
+    # 7i. Card Awakening catalog (MasterData Q4:Q25)
+    ws_md = wb["MasterData"]
+    card_awakenings_catalog = []
+    for r in range(4, 26):
+        sn = ws_md.cell(r, 17).value
+        if sn:
+            card_awakenings_catalog.append({
+                "stat_name": str(sn).strip(),
+                "max_level": 100
+            })
+
+    # 7j. Wardrobe Shine Point milestones (Input1 T3:W52)
+    wardrobe_milestones = []
+    for r in range(3, 53, 2):
+        pts_str = ws_in1.cell(r, 21).value
+        if not pts_str:
+            continue
+        m_pts = re.search(r'(\d+)', str(pts_str))
+        if not m_pts:
+            continue
+        pts = int(m_pts.group(1))
+
+        stats = {}
+        for row_offset in (0, 1):
+            s_name = ws_in1.cell(r + row_offset, 22).value
+            s_formula = ws_in1_f.cell(r + row_offset, 23).value
+            if s_name and s_formula:
+                m_val = re.search(r'=([0-9\.]+)\*', str(s_formula))
+                val = float(m_val.group(1)) if m_val else 0.0
+                stats[str(s_name).strip()] = val
+
+        wardrobe_milestones.append({
+            "point": pts,
+            "level_or_point": pts,
+            "identifier": f"{pts}_points",
+            "stats": stats
+        })
 
     # 8. Extract Equip Base & IDs from EquipData1
     ws_eq1 = wb["EquipData1"]
@@ -267,9 +482,9 @@ def compile_all():
     ]
     for slot_name, s_col, up_col, ref_col, num_stats in eq_slots:
         equip_base[slot_name] = []
-        for r in range(4, 150):
+        for r in range(4, ws_eq1.max_row + 1):
             name_val = ws_eq1.cell(r, s_col + 1).value
-            if not name_val:
+            if not name_val or str(name_val).strip() == "":
                 continue
             up_id = 0
             ref_id = 0
@@ -305,13 +520,16 @@ def compile_all():
     ws_eq2 = wb["EquipData2"]
     upgrade_tables = {}
     for col_start in range(2, ws_eq2.max_column + 1, 7):
-        for r in range(4, min(300, ws_eq2.max_row + 1)):
+        for r in range(4, ws_eq2.max_row + 1):
             uid = ws_eq2.cell(r, col_start).value
             lvl = ws_eq2.cell(r, col_start + 1).value
             if uid is None or lvl is None:
                 continue
-            uid_str = str(int(uid))
-            lvl_str = str(int(lvl))
+            try:
+                uid_str = str(int(uid))
+                lvl_str = str(int(lvl))
+            except (ValueError, TypeError):
+                continue
             if uid_str not in upgrade_tables:
                 upgrade_tables[uid_str] = {}
             s1_n = ws_eq2.cell(r, col_start + 2).value
@@ -329,13 +547,16 @@ def compile_all():
     ws_eq3 = wb["EquipData3"]
     refine_tables = {}
     for col_start in range(2, ws_eq3.max_column + 1, 7):
-        for r in range(4, min(100, ws_eq3.max_row + 1)):
+        for r in range(4, ws_eq3.max_row + 1):
             rid = ws_eq3.cell(r, col_start).value
             lvl = ws_eq3.cell(r, col_start + 1).value
             if rid is None or lvl is None:
                 continue
-            rid_str = str(int(rid))
-            lvl_str = str(int(lvl))
+            try:
+                rid_str = str(int(rid))
+                lvl_str = str(int(lvl))
+            except (ValueError, TypeError):
+                continue
             if rid_str not in refine_tables:
                 refine_tables[rid_str] = {}
             s1_n = ws_eq3.cell(r, col_start + 2).value
@@ -350,7 +571,7 @@ def compile_all():
             refine_tables[rid_str][lvl_str] = stats
 
     static_data = {
-        "version": "1.1.0",
+        "version": "1.2.0",
         "element_matrix": element_matrix,
         "size_penalty": size_penalty,
         "shadow_hotfix": shadow_hotfix,
@@ -363,6 +584,11 @@ def compile_all():
         "divinity_catalog": divinity_catalog,
         "mvp_debuffs": mvp_debuffs,
         "equip_sets": equip_sets,
+        "card_sets": card_sets,
+        "inscriptions_catalog": inscriptions_catalog,
+        "guild_blessings_catalog": guild_blessings_catalog,
+        "card_awakenings_catalog": card_awakenings_catalog,
+        "wardrobe_milestones": wardrobe_milestones,
         "equip_base": equip_base,
         "upgrade_tables": upgrade_tables,
         "refine_tables": refine_tables

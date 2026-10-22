@@ -778,4 +778,86 @@ def get_sim_combat_rules(rule_type: str) -> List[Dict[str, Any]]:
         conn.close()
 
 
+def get_sim_inscriptions(category: Optional[str] = None) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        if category:
+            cur.execute("SELECT * FROM sim_inscriptions WHERE category = ? ORDER BY name ASC", (category,))
+        else:
+            cur.execute("SELECT * FROM sim_inscriptions ORDER BY category ASC, name ASC")
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            if d.get("stats_per_level_json"):
+                d["stats_per_level"] = json.loads(d["stats_per_level_json"])
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_equip_sets() -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_combat_rules WHERE rule_type = 'equip_set' ORDER BY key_1 ASC")
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            if d.get("extra_json"):
+                d["extra"] = json.loads(d["extra_json"])
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_card_sets() -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM sim_combat_rules WHERE rule_type = 'card_set' ORDER BY key_1 ASC")
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            if d.get("extra_json"):
+                d["extra"] = json.loads(d["extra_json"])
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
+
+def get_sim_wardrobe_milestones(max_points: Optional[int] = None) -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor()
+        if max_points is not None:
+            cur.execute(
+                "SELECT * FROM sim_passive_milestones WHERE system_type = 'wardrobe_shine' AND level_or_point <= ? ORDER BY level_or_point ASC",
+                (max_points,)
+            )
+        else:
+            cur.execute(
+                "SELECT * FROM sim_passive_milestones WHERE system_type = 'wardrobe_shine' ORDER BY level_or_point ASC"
+            )
+        res = []
+        for r in cur.fetchall():
+            d = dict(r)
+            if d.get("stats_json"):
+                d["stats"] = json.loads(d["stats_json"])
+            res.append(d)
+        return res
+    finally:
+        conn.close()
+
 
