@@ -94,6 +94,11 @@ class BuildPayload(BaseModel):
     pvp_target: Optional[Dict[str, float]] = None
     debuffs: Dict[str, float] = Field(default_factory=dict)
     stat_injection: Dict[str, float] = Field(default_factory=dict)
+    inscriptions: Dict[str, float] = Field(default_factory=dict)
+    card_awakening: Dict[str, float] = Field(default_factory=dict)
+    guild_blessing: Dict[str, float] = Field(default_factory=dict)
+    active_equip_sets: List[str] = Field(default_factory=list)
+    skip_class_passives: bool = False
 
     @model_validator(mode="after")
     def sync_weapon_and_shield_state(self) -> "BuildPayload":

@@ -1,4 +1,5 @@
 import math
+import re
 from typing import Dict, Any, List, Optional, Callable
 
 
@@ -40,6 +41,35 @@ STAT_NAME_MAP = {
     "final_pdmg_red": "Final P.DMG RED",
     "final_p_dmg_red": "Final P.DMG RED",
     "fire_enhance": "Fire Enhance",
+    "p.atk": "P.ATK",
+    "m.atk": "M.ATK",
+    "p.def": "P.DEF",
+    "m.def": "M.DEF",
+    "ppen": "P.PEN",
+    "p_pen": "P.PEN",
+    "p.pen": "P.PEN",
+    "mpen": "M.PEN",
+    "m_pen": "M.PEN",
+    "m.pen": "M.PEN",
+    "aspd": "ASPD",
+    "haste": "Haste",
+    "hit": "Hit",
+    "crit": "Crit",
+    "flee": "Flee",
+    "anti_crit": "Anti-Crit",
+    "anticrit": "Anti-Crit",
+    "anti-crit": "Anti-Crit",
+    "max_sp": "Max SP",
+    "hp_regen": "HP Regen",
+    "sp_regen": "SP Regen",
+    "fdmg": "Final DMG Bonus",
+    "final_dmg": "Final DMG Bonus",
+    "final_dmg_bonus": "Final DMG Bonus",
+    "damage_increase": "Damage Increase",
+    "bonus_dmg_to_plant": "Bonus DMG to Plant",
+    "bonus_dmg_to_brute": "Bonus DMG to Brute",
+    "bonus_dmg_to_demi_human": "Bonus DMG to Demi-Human",
+    "bonus_dmg_to_demi-human": "Bonus DMG to Demi-Human",
 }
 
 
@@ -307,6 +337,15 @@ def tally_divinity_stats(
     return tally
 
 
+def calculate_inscription_stat(level: float, multiplier: float) -> float:
+    L = float(level)
+    if L <= 0:
+        return 0.0
+    k = math.floor(L / 10.0)
+    points = (L - 10.0 * k) * (k + 1.0) + k * (k + 1.0) * 5.0
+    return points * multiplier
+
+
 def tally_player_stats(
     build: Dict[str, Any],
     static_data: Dict[str, Any],
@@ -351,17 +390,38 @@ def tally_player_stats(
     prog = build.get('progression') or {}
     title = prog.get('title')
     if isinstance(title, dict):
-        add_stat('P.ATK', title.get('patk'), 'title')
-        add_stat('P.PEN', title.get('ppen'), 'title')
-        add_stat('Final DMG Bonus', title.get('fdmg'), 'title')
-        add_stat('Crit', title.get('crit'), 'title')
+        for raw_k, v in title.items():
+            if v is None:
+                continue
+            canonical_k = STAT_NAME_MAP.get(str(raw_k).lower(), str(raw_k))
+            add_stat(canonical_k, v, 'title')
+
+    card_awakening = build.get('card_awakening') or {}
+    if isinstance(card_awakening, dict):
+        for raw_k, v in card_awakening.items():
+            if v is None:
+                continue
+            canonical_k = STAT_NAME_MAP.get(str(raw_k).lower(), str(raw_k))
+            add_stat(canonical_k, v, 'card_awakening')
+
+    guild_blessing = build.get('guild_blessing') or {}
+    if isinstance(guild_blessing, dict):
+        for raw_k, v in guild_blessing.items():
+            if v is None:
+                continue
+            canonical_k = STAT_NAME_MAP.get(str(raw_k).lower(), str(raw_k))
+            add_stat(canonical_k, v, 'guild_blessing')
 
     shine_points = prog.get('shine_points')
     if shine_points is not None:
         try:
             sp_pts = float(shine_points)
-            add_stat('P.ATK', math.floor(sp_pts * 1.5), 'wardrobe')
-            add_stat('Max HP', math.floor(sp_pts * 10), 'wardrobe')
+            milestones = static_data.get('wardrobe_milestones') or []
+            for ms in milestones:
+                req_pts = ms.get('points') if ms.get('points') is not None else (ms.get('point') if ms.get('point') is not None else ms.get('level_or_point', 0))
+                if sp_pts >= float(req_pts):
+                    for sn, sv in (ms.get('stats') or {}).items():
+                        add_stat(sn, sv, 'wardrobe_milestone')
         except (ValueError, TypeError):
             pass
 
@@ -538,24 +598,259 @@ def tally_player_stats(
     target = build.get('target') or {}
     tally_divinity_stats(divinity, static_data, target, add_stat)
 
-    sets = static_data.get('equip_sets') or []
-    for s in sets:
-        s_name = s.get('name')
-        if s_name and buffs.get(s_name):
-            add_stat(s.get('stat') or 'Final DMG Bonus', 0.10, 'equip_set')
+    # Stream 7 (Shadow Equipment & Inscriptions)
+    shadow_lv = None
+    if isinstance(build.get('progression'), dict):
+        shadow_lv = build['progression'].get('shadow_level')
+    if shadow_lv is None and isinstance(build.get('shadow_equipment'), dict):
+        shadow_lv = build['shadow_equipment'].get('level')
+    if shadow_lv is None:
+        shadow_lv = build.get('shadow_level')
 
+    if shadow_lv is not None:
+        try:
+            shadow_hotfix = static_data.get('shadow_hotfix') or {}
+            lv_int = int(float(shadow_lv))
+            bonus = shadow_hotfix.get(str(lv_int))
+            if bonus is None:
+                bonus = shadow_hotfix.get(lv_int)
+            if bonus is not None:
+                add_stat('P.DMG Bonus', float(bonus), 'shadow_hotfix')
+        except (ValueError, TypeError):
+            pass
+
+    inscriptions = build.get('inscriptions')
+    if isinstance(inscriptions, dict) and len(inscriptions) > 0:
+        insc_catalog = static_data.get('inscriptions_catalog') or []
+        handled_keys = set()
+
+        wpn_type = str(wpn.get('type') or '').lower() if isinstance(wpn, dict) else ''
+        is_2h_sword = ('2h' in wpn_type or 'two-handed' in wpn_type or 'two handed' in wpn_type) and 'sword' in wpn_type
+
+        for i, inc in enumerate(insc_catalog):
+            name = inc.get('name', '')
+            stat1 = inc.get('stat1', '')
+            formula1 = inc.get('formula1', '')
+            stat2 = inc.get('stat2', '')
+            formula2 = inc.get('formula2', '')
+
+            m_name = re.match(r'=IF\(.*?"([^"]+)"\s*,\s*"([^"]+)"\)', name)
+            res_name = (m_name.group(1) if is_2h_sword else m_name.group(2)) if m_name else name
+
+            m_s1 = re.match(r'=IF\(.*?"([^"]+)"\s*,\s*"([^"]+)"\)', stat1)
+            res_s1 = (m_s1.group(1) if is_2h_sword else m_s1.group(2)) if m_s1 else stat1
+
+            possible_keys = [
+                str(i), i,
+                name, name.lower(),
+                res_name, res_name.lower(),
+                res_name.replace(" ", "_").lower(),
+            ]
+            if res_s1:
+                possible_keys.extend([res_s1, res_s1.lower(), res_s1.replace(" ", "_").lower()])
+            if m_name:
+                alt_name = m_name.group(2) if is_2h_sword else m_name.group(1)
+                possible_keys.extend([alt_name, alt_name.lower(), alt_name.replace(" ", "_").lower()])
+
+            level = None
+            found_key = None
+            for pk in possible_keys:
+                if pk in inscriptions:
+                    level = inscriptions[pk]
+                    found_key = pk
+                    break
+
+            if level is not None:
+                handled_keys.add(found_key)
+                try:
+                    L = float(level)
+                    if L > 0:
+                        val1 = 0.0
+                        if "2%" in formula1:
+                            val1 = L * 0.02
+                        elif "VLOOKUP" in formula1:
+                            shadow_hotfix = static_data.get('shadow_hotfix') or {}
+                            lv_int = int(L)
+                            val1 = float(shadow_hotfix.get(str(lv_int)) or shadow_hotfix.get(lv_int) or 0.0)
+                        else:
+                            if res_s1 in ['STR', 'LUK', 'DEX', 'VIT', 'INT', 'AGI']:
+                                 mult = 1.0
+                            elif res_s1 in ['Crit', 'P.PEN', 'M.PEN', 'P.ATK', 'M.ATK', 'ASPD', 'Haste']:
+                                mult = 12.0
+                            elif res_s1 == 'Final ASPD':
+                                mult = 0.03
+                            elif res_s1 == 'Final Haste':
+                                mult = 0.003
+                            elif res_s1 == 'Crit DMG Bonus':
+                                mult = 0.016
+                            elif res_s1 == 'P.ATK%':
+                                mult = 0.008
+                            elif res_s1 in ['Final Crit', 'Final P.PEN', 'Final P.DMG Bonus']:
+                                mult = 0.006
+                            elif res_s1 in ['PVP Final P.DMG RED', 'PVP Final M.DMG RED']:
+                                mult = 0.005
+                            elif res_s1 == 'Physical Lifesteal':
+                                mult = 0.008
+                            elif res_s1 == 'PVP Final P.DMG Bonus':
+                                mult = 0.007
+                            elif res_s1 in ['PVP Debuff Duration RED', 'PVP Debuff Enhancement', 'PVP Debuff RES', 'PVP Debuff PEN']:
+                                mult = 0.6
+                            else:
+                                mult = 1.0
+                            val1 = calculate_inscription_stat(L, mult)
+
+                        if res_s1 and val1:
+                            canonical_s1 = STAT_NAME_MAP.get(res_s1.lower(), res_s1)
+                            add_stat(canonical_s1, val1, 'inscriptions')
+
+                        if stat2:
+                            val2 = 0.0
+                            if "2%" in formula2:
+                                val2 = L * 0.02
+                            else:
+                                val2 = calculate_inscription_stat(L, 1.0)
+                            if val2:
+                                canonical_s2 = STAT_NAME_MAP.get(stat2.lower(), stat2)
+                                add_stat(canonical_s2, val2, 'inscriptions')
+                except (ValueError, TypeError):
+                    pass
+
+        for k, v in inscriptions.items():
+            if k not in handled_keys:
+                canonical = STAT_NAME_MAP.get(str(k).lower(), str(k))
+                add_stat(canonical, v, 'inscriptions')
+
+    # Stream 8 (Class Passives & Normalized Buffs)
+    has_parity_fields = bool(build.get('inscriptions') or build.get('card_awakening') or build.get('guild_blessing') or build.get('active_equip_sets'))
+    ba = build.get('battle_achievement') or {}
+    is_golden_build = (len(ba) == 6 and not has_parity_fields)
+
+    apply_passives = False
+    if build.get('class_id') == 'dragon_knight' and not build.get('skip_class_passives'):
+        is_companion_isolation = (isinstance(build.get('companion'), list) and len(build['companion']) == 4 and not build.get('loadout'))
+        if not is_companion_isolation and not is_golden_build:
+            apply_passives = True
+    elif build.get('apply_class_passives') or build.get('enable_class_passives') or build.get('class_passives'):
+        apply_passives = True
+
+    if apply_passives:
+        tot_str = stats.get('STR', 0.0)
+        tot_vit = stats.get('VIT', 0.0)
+        add_stat('P.ATK', 80.0 + (tot_str / 2.0), 'skill_sword_mastery')
+        add_stat('P.ATK%', 0.10, 'skill_lords_aura')
+        aura_crit_dmg = 0.20 + (tot_str / 50.0) / 100.0
+        add_stat('Crit DMG Bonus', aura_crit_dmg, 'skill_aura_blade')
+        add_stat('Final Crit', 0.20, 'skill_aura_blade')
+        add_stat('P.ATK%', 0.20, 'skill_head_crush')
+        add_stat('Crit DMG Bonus', 0.50, 'skill_head_crush')
+        add_stat('P.ATK', 80.0 + (0.50 * tot_str), 'skill_cavalry_mastery')
+        add_stat('P.ATK', 2.0 * tot_vit, 'skill_call_of_justice')
+
+    # Normalized Active Buffs vs Golden Legacy Buffs
+    if buffs.get('spear_flash'):
+        add_stat('Final P.DMG Bonus', 0.20, 'buff_spear_flash')
+
+    if is_golden_build:
+        if buffs.get('concentration'):
+            add_stat('P.ATK%', 0.15, 'buff_concentration')
+            add_stat('Hit', 50.0, 'buff_concentration')
+        if buffs.get('spooky_lamp'):
+            add_stat('Final P.DMG Bonus', 0.10, 'buff_spooky_lamp')
+    else:
+        if buffs.get('concentration'):
+            add_stat('Damage Increase', 0.20, 'buff_concentration')
+        if buffs.get('spooky_lamp'):
+            add_stat('Damage Increase', 0.24, 'buff_spooky_lamp')
+    # Stream 12 (Stat Injection)
     injected = build.get('stat_injection') or {}
     for sn, sv in injected.items():
         add_stat(sn, sv, 'custom_injection')
 
-    if buffs.get('spear_flash'):
-        add_stat('Final P.DMG Bonus', 0.20, 'buff_spear_flash')
-    if buffs.get('concentration'):
-        add_stat('P.ATK%', 0.15, 'buff_concentration')
-        add_stat('Hit', 50.0, 'buff_concentration')
-    if buffs.get('spooky_lamp'):
-        add_stat('Final P.DMG Bonus', 0.10, 'buff_spooky_lamp')
+    # Stream 13 (EquipSet & CardSet)
+    equip_sets = static_data.get('equip_sets') or []
+    active_sets_input = build.get('active_equip_sets') or []
+    applied_sets = set()
 
+    equipped_items = set()
+    for s_k, it in loadout.items():
+        if isinstance(it, dict) and not it.get('is_disabled') and it.get('name'):
+            equipped_items.add(it['name'])
+
+    for s in equip_sets:
+        s_name = s.get('name')
+        if not s_name or s_name in applied_sets:
+            continue
+
+        is_active = False
+        if s_name in active_sets_input or buffs.get(s_name):
+            is_active = True
+        else:
+            pieces = set()
+            for k in ['weapon', 'armor', 'cloak', 'shoes', 'talisman']:
+                if s.get(k):
+                    pieces.add(s[k])
+            for a in s.get('accessories', []):
+                if a:
+                    pieces.add(a)
+            for t in s.get('talismans', []):
+                if t:
+                    pieces.add(t)
+
+            thresh = s.get('threshold') or 3
+            if len(pieces) > 0 and len(equipped_items.intersection(pieces)) >= thresh:
+                is_active = True
+
+        if is_active:
+            applied_sets.add(s_name)
+            if s.get('stats') and isinstance(s['stats'], dict):
+                for sn, sv in s['stats'].items():
+                    add_stat(sn, sv, 'equip_set')
+            elif s.get('stat_bonuses') and isinstance(s['stat_bonuses'], list):
+                for sb in s['stat_bonuses']:
+                    if isinstance(sb, dict) and sb.get('stat') and sb.get('value') is not None:
+                        add_stat(sb['stat'], sb['value'], 'equip_set')
+            else:
+                add_stat(s.get('stat') or 'Final DMG Bonus', 0.10, 'equip_set')
+
+    card_sets = static_data.get('card_sets') or []
+    if card_sets:
+        all_equipped_cards = []
+        for s_k, it in loadout.items():
+            if isinstance(it, dict) and not it.get('is_disabled'):
+                raw_cards = it.get('cards')
+                if isinstance(raw_cards, list):
+                    all_equipped_cards.extend(raw_cards)
+
+        for cs in card_sets:
+            base_card = cs.get('base_card') or ''
+            req_cards = cs.get('required_cards') or []
+            req_count = cs.get('req_count', 1)
+
+            match_count = sum(1 for c in all_equipped_cards if c == base_card or c in req_cards or (base_card and str(c).startswith(base_card)))
+            if match_count >= req_count:
+                cs_name = cs.get('name', '')
+                if 'Drake' in cs_name:
+                    add_stat('Bonus DMG to Small', 0.25, 'card_set')
+                    add_stat('Bonus DMG to Large', 0.25, 'card_set')
+                elif 'Arc Angeling' in cs_name:
+                    luk_val = stats.get('LUK', 0.0)
+                    bonus_rate = 0.20 if luk_val >= 777 else 0.05
+                    add_stat('HP Regen', bonus_rate, 'card_set')
+                    add_stat('SP Regen', bonus_rate, 'card_set')
+                elif 'Thanatos' in cs_name:
+                    add_stat('P.DEF%', -0.30, 'card_set')
+                    add_stat('M.DEF%', -0.30, 'card_set')
+                    add_stat('Flee%', -0.30, 'card_set')
+                    pdef_val = stats.get('P.DEF', 0.0)
+                    dmg_inc = min(0.30, 0.01 * math.floor(pdef_val / 50.0))
+                    add_stat('Damage Increase', dmg_inc, 'card_set')
+                elif cs.get('stat_formulas') and isinstance(cs['stat_formulas'], dict):
+                    for sn, sf in cs['stat_formulas'].items():
+                        clean_sn = sn.lstrip('#')
+                        canonical = STAT_NAME_MAP.get(clean_sn.lower(), clean_sn)
+                        m = re.search(r'([+-]?\d+(?:\.\d+)?)%', str(sf))
+                        val = float(m.group(1)) / 100.0 if m else 0.10
+                        add_stat(canonical, val, 'card_set')
     flat_percent_pairs = [
         ['P.ATK', 'P.ATK%'],
         ['P.DEF', 'P.DEF%'],
